@@ -1,0 +1,1661 @@
+// Global State
+let currentUser = null;
+let currentQuiz = null;
+let currentQuestionIndex = 0;
+let quizQuestions = [];
+let userAnswer = null;
+let minigameCards = [];
+let minigameFlipped = [];
+let minigameMatched = [];
+
+// Adaptive Difficulty System
+let currentDifficulty = 'easy'; // easy, medium, hard
+let consecutiveCorrect = 0;
+let consecutiveIncorrect = 0;
+
+// ==================== TITLE & LOGIN SCREEN ====================
+
+function goToLoginScreen() {
+    document.getElementById('titleView').classList.remove('view-active');
+    document.getElementById('titleView').classList.add('view-hidden');
+    document.getElementById('loginView').classList.remove('view-hidden');
+    document.getElementById('loginView').classList.add('view-active');
+}
+
+function backToTitle() {
+    document.getElementById('loginView').classList.remove('view-active');
+    document.getElementById('loginView').classList.add('view-hidden');
+    document.getElementById('titleView').classList.remove('view-hidden');
+    document.getElementById('titleView').classList.add('view-active');
+}
+
+function switchAuthTab(tab) {
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const loginTab = document.getElementById('loginTab');
+    const signupTab = document.getElementById('signupTab');
+    
+    if (tab === 'login') {
+        loginForm.classList.add('active-form');
+        signupForm.classList.remove('active-form');
+        loginTab.classList.add('active');
+        signupTab.classList.remove('active');
+    } else {
+        signupForm.classList.add('active-form');
+        loginForm.classList.remove('active-form');
+        signupTab.classList.add('active');
+        loginTab.classList.remove('active');
+    }
+}
+
+async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    
+    if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    // For demo, create a user with email as identifier
+    try {
+        const response = await fetch('/api/users');
+        const users = await response.json();
+        const user = users.find(u => u.email === email);
+        
+        if (user) {
+            currentUser = user;
+            goToUserDashboard();
+        } else {
+            alert('User not found. Please sign up first.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed');
+    }
+}
+
+async function handleSignup() {
+    const firstName = document.getElementById('signupFirstName').value.trim();
+    const lastName = document.getElementById('signupLastName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value.trim();
+    const confirmPassword = document.getElementById('signupConfirmPassword').value.trim();
+    const grade = 'Kindergarten'; // Default grade
+    const dob = new Date().toISOString().split('T')[0];
+    
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ firstName, lastName, email, grade, dateOfBirth: dob })
+        });
+        
+        if (response.ok) {
+            const user = await response.json();
+            currentUser = user;
+            showFeedback('Account created successfully!', 'perfect');
+            setTimeout(() => {
+                goToUserDashboard();
+            }, 1000);
+        } else {
+            alert('Signup failed');
+        }
+    } catch (error) {
+        console.error('Signup error:', error);
+        alert('Signup failed');
+    }
+}
+
+function goToUserDashboard() {
+    document.getElementById('loginView').classList.remove('view-active');
+    document.getElementById('loginView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+    loadUserProgress(currentUser.id);
+}
+
+function logout() {
+    currentUser = null;
+    selectedGradeForQuiz = null;
+    
+    // Reset all forms
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('signupFirstName').value = '';
+    document.getElementById('signupLastName').value = '';
+    document.getElementById('signupEmail').value = '';
+    document.getElementById('signupPassword').value = '';
+    document.getElementById('signupConfirmPassword').value = '';
+    
+    // Go back to title screen
+    document.getElementById('dashboardView').classList.add('view-hidden');
+    document.getElementById('loginView').classList.remove('view-active');
+    document.getElementById('loginView').classList.add('view-hidden');
+    document.getElementById('titleView').classList.remove('view-hidden');
+    document.getElementById('titleView').classList.add('view-active');
+    
+    showFeedback('Logged out successfully!', 'excellent');
+}
+
+function showFeedback(message, type = 'default') {
+    const feedback = document.createElement('div');
+    feedback.className = `feedback-message ${type}`;
+    feedback.textContent = message;
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => {
+        feedback.style.animation = 'fadeInDown 0.5s ease-out reverse';
+        setTimeout(() => feedback.remove(), 500);
+    }, 2000);
+}
+
+// ==================== USER MANAGEMENT ====================
+
+// Fetch all users and display them
+async function fetchUsers() {
+    try {
+        const response = await fetch('/api/users');
+        const data = await response.json();
+        displayUsers(data);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
+}
+
+// Display users in the table
+function displayUsers(users) {
+    const tbody = document.getElementById('usersBody');
+    tbody.innerHTML = '';
+    
+    users.forEach(user => {
+        const row = document.createElement('tr');
+        const dob = new Date(user.dateOfBirth).toLocaleDateString();
+        row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.firstName}</td>
+            <td>${user.lastName}</td>
+            <td>${user.email}</td>
+            <td>${user.grade}</td>
+            <td>${dob}</td>
+            <td>
+                <button onclick="openDashboard(${user.id}, '${user.firstName}')">Dashboard</button>
+                <button class="btn-delete" onclick="deleteUser(${user.id})">Delete</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Add a new user
+async function addUser() {
+    const firstNameInput = document.getElementById('firstNameInput');
+    const lastNameInput = document.getElementById('lastNameInput');
+    const emailInput = document.getElementById('emailInput');
+    const gradeInput = document.getElementById('gradeInput');
+    const dobInput = document.getElementById('dobInput');
+    
+    const firstName = firstNameInput.value.trim();
+    const lastName = lastNameInput.value.trim();
+    const email = emailInput.value.trim();
+    const grade = gradeInput.value.trim();
+    const dateOfBirth = dobInput.value;
+    
+    if (!firstName || !lastName || !email || !grade || !dateOfBirth) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ firstName, lastName, email, grade, dateOfBirth })
+        });
+        
+        if (response.ok) {
+            firstNameInput.value = '';
+            lastNameInput.value = '';
+            emailInput.value = '';
+            gradeInput.value = '';
+            dobInput.value = '';
+            fetchUsers();
+        } else {
+            alert('Error adding user');
+        }
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+}
+
+// Delete a user
+async function deleteUser(id) {
+    if (!confirm('Are you sure?')) return;
+    
+    try {
+        const response = await fetch(`/api/users/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            fetchUsers();
+        } else {
+            alert('Error deleting user');
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+    }
+}
+
+// Clear all data
+async function clearAll() {
+    if (!confirm('Are you sure? This will delete all users.')) return;
+    
+    try {
+        const response = await fetch('/api/users/clear-all', {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            fetchUsers();
+        } else {
+            alert('Error clearing data');
+        }
+    } catch (error) {
+        console.error('Error clearing data:', error);
+    }
+}
+
+// ==================== DASHBOARD ====================
+
+async function openDashboard(userId, firstName) {
+    // Get user grade from the table
+    const response = await fetch('/api/users');
+    const users = await response.json();
+    const user = users.find(u => u.id === userId);
+    const grade = user ? user.grade : 'Kindergarten';
+    
+    currentUser = { id: userId, firstName, grade };
+    
+    // Switch views
+    document.getElementById('userView').classList.remove('view-active');
+    document.getElementById('userView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+    
+    // Update dashboard
+    document.getElementById('studentName').textContent = `Welcome, ${firstName}! (${grade})`;
+    
+    // Load user progress
+    await loadUserProgress(userId);
+}
+
+async function loadUserProgress(userId) {
+    try {
+        const response = await fetch(`/api/progress/${userId}`);
+        if (response.ok) {
+            const progress = await response.json();
+            updateProgressDisplay(progress);
+        }
+    } catch (error) {
+        console.error('Error loading progress:', error);
+    }
+}
+
+function updateProgressDisplay(progress) {
+    const pointsElement = document.getElementById('pointsCount');
+    pointsElement.textContent = progress.points;
+    
+    const minigameStatus = document.getElementById('minigameStatus');
+    const minigameCard = document.getElementById('minigameCard');
+    
+    if (progress.points >= 30) {
+        minigameStatus.textContent = '✓ Unlocked!';
+        minigameStatus.style.color = '#27ae60';
+        minigameCard.style.display = 'block';
+    } else {
+        minigameStatus.textContent = `${30 - progress.points} more points needed`;
+        minigameStatus.style.color = '#e74c3c';
+        minigameCard.style.display = 'none';
+    }
+    
+    // Show assignments section for 2nd graders
+    const assignmentsSection = document.getElementById('assignmentsSection');
+    const grade = currentUser.grade.toLowerCase();
+    if (grade === '2nd grade' || grade === '2') {
+        assignmentsSection.style.display = 'block';
+    } else {
+        assignmentsSection.style.display = 'none';
+    }
+    
+    // Show board games section for all grades (3rd grade and above)
+    const boardGamesSection = document.getElementById('boardGamesSection');
+    if (grade === '3rd grade' || grade === '3' || grade === '4th grade' || grade === '4' || grade === '5th grade' || grade === '5' ||
+        grade === '6th grade' || grade === '6' || grade === '7th grade' || grade === '7' || grade === '8th grade' || grade === '8' ||
+        grade === '9th grade' || grade === '9' || grade === '10th grade' || grade === '10' || grade === '11th grade' || grade === '11' ||
+        grade === '12th grade' || grade === '12') {
+        boardGamesSection.style.display = 'block';
+    } else {
+        boardGamesSection.style.display = 'block'; // Show for all grades for now
+    }
+}
+
+function goBackToUsers() {
+    logout();
+}
+
+// ==================== QUIZ SYSTEM ====================
+
+async function startQuiz(subject, difficulty) {
+    try {
+        const grade = currentUser.grade;
+        const response = await fetch(`/api/quizzes/${grade}/${subject}/${difficulty}`);
+        
+        console.log('Fetching quiz:', grade, subject, difficulty);
+        console.log('Response status:', response.status);
+        
+        if (response.ok) {
+            quizQuestions = await response.json();
+            console.log('Quiz questions loaded:', quizQuestions);
+            
+            currentQuestionIndex = 0;
+            currentQuiz = { subject, difficulty };
+            userAnswer = null;
+            
+            // Switch to quiz view
+            document.getElementById('dashboardView').classList.add('view-hidden');
+            document.getElementById('quizView').classList.remove('view-hidden');
+            document.getElementById('quizView').classList.add('view-active');
+            
+            // Update title
+            const titleElement = document.getElementById('quizTitle');
+            titleElement.textContent = `${subject.charAt(0).toUpperCase() + subject.slice(1)} - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} Level`;
+            
+            displayQuestion();
+        } else {
+            alert('Error loading quiz');
+            console.error('Quiz loading error:', response.status);
+        }
+    } catch (error) {
+        console.error('Error starting quiz:', error);
+        alert('Error starting quiz');
+    }
+}
+
+function displayQuestion() {
+    if (currentQuestionIndex >= quizQuestions.length) {
+        endQuiz();
+        return;
+    }
+    
+    const question = quizQuestions[currentQuestionIndex];
+    
+    console.log('Displaying question:', question);
+    console.log('Options:', question.options);
+    
+    // Update question number with difficulty badge
+    const difficultyText = question.difficulty || currentDifficulty;
+    document.getElementById('questionNumber').textContent = 
+        `Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
+    
+    // Display question
+    document.getElementById('questionDisplay').textContent = question.question;
+    
+    // Display options
+    const optionsDisplay = document.getElementById('optionsDisplay');
+    optionsDisplay.innerHTML = '';
+    
+    if (!question.options || question.options.length === 0) {
+        console.error('No options found for question:', question);
+        return;
+    }
+    
+    question.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.type = 'button';
+        btn.onclick = () => selectAnswer(index);
+        console.log('Creating button for option:', option);
+        optionsDisplay.appendChild(btn);
+    });
+    
+    // Hide result and next button
+    document.getElementById('resultDisplay').className = 'result-hidden';
+    document.getElementById('resultDisplay').textContent = '';
+    document.getElementById('explanationDisplay').className = 'explanation-hidden';
+    document.getElementById('explanationDisplay').textContent = '';
+    document.getElementById('nextBtn').style.display = 'none';
+    
+    userAnswer = null;
+}
+
+async function selectAnswer(optionIndex) {
+    if (userAnswer !== null) return; // Already answered
+    
+    userAnswer = optionIndex;
+    const question = quizQuestions[currentQuestionIndex];
+    const grade = currentQuiz.grade || currentUser.grade;
+    const isCorrect = optionIndex === question.correctAnswer;
+    
+    // Mark buttons
+    const optionBtns = document.querySelectorAll('.option-btn');
+    optionBtns.forEach((btn, index) => {
+        btn.disabled = true;
+        if (index === question.correctAnswer) {
+            btn.classList.add('correct');
+        } else if (index === userAnswer && userAnswer !== question.correctAnswer) {
+            btn.classList.add('incorrect');
+        }
+    });
+    
+    // Update adaptive difficulty tracking
+    if (isCorrect) {
+        consecutiveCorrect++;
+        consecutiveIncorrect = 0;
+    } else {
+        consecutiveIncorrect++;
+        consecutiveCorrect = 0;
+    }
+    
+    // Submit answer to backend
+    try {
+        const response = await fetch(`/api/quizzes/submit/${currentUser.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                grade: grade,
+                subject: currentQuiz.subject,
+                difficulty: currentQuiz.difficulty,
+                questionId: question.id,
+                selectedAnswer: optionIndex
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            
+            // Show feedback message
+            if (result.isCorrect) {
+                const messages = ['Good Job!', 'Excellent!', 'Perfect!', 'Amazing!', 'Great Work!'];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                showFeedback(randomMessage, 'excellent');
+            } else {
+                showFeedback('Keep Trying!', 'default');
+            }
+            
+            // Show result
+            const resultDisplay = document.getElementById('resultDisplay');
+            resultDisplay.className = result.isCorrect ? 'result-display correct' : 'result-display incorrect';
+            resultDisplay.innerHTML = `${result.isCorrect ? '✓ Correct!' : '✗ Incorrect!'} 
+                <br>You earned: ${result.points} points
+                <br>Total Points: ${result.userPoints}`;
+            
+            // Update points display
+            document.getElementById('userPointsQuiz').textContent = `Points: ${result.userPoints}`;
+            
+            // Show explanation for incorrect answers
+            if (!isCorrect) {
+                displayExplanation(question, question.correctAnswer);
+            }
+            
+            // Show adaptive difficulty message
+            showAdaptiveMessage();
+            
+            // Show next button
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error submitting answer:', error);
+    }
+}
+
+function displayExplanation(question, correctIndex) {
+    const explanationDisplay = document.getElementById('explanationDisplay');
+    const correctAnswer = question.options[correctIndex];
+    const explanation = question.explanation || `The correct answer is: ${correctAnswer}`;
+    
+    explanationDisplay.className = 'explanation-display';
+    explanationDisplay.innerHTML = `
+        <div class="explanation-label">📚 Here's Why:</div>
+        <div class="explanation-text">${explanation}</div>
+        <div class="explanation-text"><strong>Correct Answer:</strong> ${correctAnswer}</div>
+    `;
+}
+
+function showAdaptiveMessage() {
+    const messageContainer = document.createElement('div');
+    let shouldShow = false;
+    let message = '';
+    let className = '';
+    
+    // Check if we should level up or down
+    if (consecutiveCorrect >= 2 && currentDifficulty !== 'hard') {
+        shouldShow = true;
+        message = '🎉 Great job! Moving to harder questions!';
+        className = 'adaptive-message leveled-up';
+        currentDifficulty = currentDifficulty === 'easy' ? 'medium' : 'hard';
+    } else if (consecutiveIncorrect >= 2 && currentDifficulty !== 'easy') {
+        shouldShow = true;
+        message = '💡 Let\'s try easier questions to build confidence!';
+        className = 'adaptive-message leveled-down';
+        currentDifficulty = currentDifficulty === 'hard' ? 'medium' : 'easy';
+    }
+    
+    if (shouldShow) {
+        messageContainer.className = className;
+        messageContainer.textContent = message;
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.parentNode.insertBefore(messageContainer, nextBtn);
+    }
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    userAnswer = null;
+    
+    // Remove any adaptive messages
+    const adaptiveMsg = document.querySelector('.adaptive-message');
+    if (adaptiveMsg) {
+        adaptiveMsg.remove();
+    }
+    
+    displayQuestion();
+}
+
+function endQuiz() {
+    // Reset adaptive difficulty for next quiz
+    currentDifficulty = 'easy';
+    consecutiveCorrect = 0;
+    consecutiveIncorrect = 0;
+    
+    alert(`Quiz completed! Check the dashboard to see your progress.`);
+    exitQuiz();
+}
+
+function exitQuiz() {
+    currentQuiz = null;
+    quizQuestions = [];
+    currentQuestionIndex = 0;
+    userAnswer = null;
+    
+    // Switch back to appropriate view based on whether we came from grade explorer
+    if (selectedGradeForQuiz) {
+        document.getElementById('quizView').classList.remove('view-active');
+        document.getElementById('quizView').classList.add('view-hidden');
+        document.getElementById('gradeContentView').classList.remove('view-hidden');
+        document.getElementById('gradeContentView').classList.add('view-active');
+        selectedGradeForQuiz = null;
+    } else {
+        document.getElementById('quizView').classList.remove('view-active');
+        document.getElementById('quizView').classList.add('view-hidden');
+        document.getElementById('dashboardView').classList.remove('view-hidden');
+        document.getElementById('dashboardView').classList.add('view-active');
+    }
+    
+    // Reload progress
+    loadUserProgress(currentUser.id);
+}
+
+// ==================== MINIGAME ====================
+
+function playMinigame() {
+    // Switch to minigame view
+    document.getElementById('dashboardView').classList.add('view-hidden');
+    document.getElementById('minigameView').classList.remove('view-hidden');
+    document.getElementById('minigameView').classList.add('view-active');
+    
+    // Initialize game
+    initializeMinigame();
+}
+
+function initializeMinigame() {
+    const pairs = ['🍎', '🍌', '🍉', '🍇', '🍓', '🥝', '🍒', '🥭'];
+    minigameCards = [...pairs, ...pairs].sort(() => Math.random() - 0.5);
+    minigameFlipped = new Array(minigameCards.length).fill(false);
+    minigameMatched = new Array(minigameCards.length).fill(false);
+    
+    renderGameBoard();
+}
+
+function renderGameBoard() {
+    const gameBoard = document.getElementById('gameBoard');
+    gameBoard.innerHTML = '';
+    
+    minigameCards.forEach((card, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'game-card';
+        btn.onclick = () => flipCard(index);
+        
+        if (minigameMatched[index]) {
+            btn.classList.add('matched');
+            btn.disabled = true;
+            btn.textContent = minigameCards[index];
+        } else if (minigameFlipped[index]) {
+            btn.classList.add('flipped');
+            btn.textContent = minigameCards[index];
+        } else {
+            btn.textContent = '?';
+        }
+        
+        gameBoard.appendChild(btn);
+    });
+}
+
+function flipCard(index) {
+    if (minigameFlipped[index] || minigameMatched[index]) return;
+    
+    minigameFlipped[index] = true;
+    renderGameBoard();
+    
+    const flippedCards = minigameFlipped
+        .map((flipped, i) => flipped && !minigameMatched[i] ? i : -1)
+        .filter(i => i !== -1);
+    
+    if (flippedCards.length === 2) {
+        setTimeout(() => checkMatch(flippedCards[0], flippedCards[1]), 800);
+    }
+}
+
+function checkMatch(index1, index2) {
+    if (minigameCards[index1] === minigameCards[index2]) {
+        minigameMatched[index1] = true;
+        minigameMatched[index2] = true;
+        
+        const matchedCount = minigameMatched.filter(m => m).length;
+        if (matchedCount === minigameCards.length) {
+            showGameComplete();
+        }
+    }
+    
+    minigameFlipped[index1] = false;
+    minigameFlipped[index2] = false;
+    renderGameBoard();
+}
+
+function showGameComplete() {
+    const gameMessage = document.getElementById('gameMessage');
+    gameMessage.className = 'success';
+    gameMessage.textContent = '🎉 You Won! Great job!';
+    
+    setTimeout(() => {
+        exitMinigame();
+    }, 2000);
+}
+
+function exitMinigame() {
+    document.getElementById('minigameView').classList.remove('view-active');
+    document.getElementById('minigameView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+}
+
+// ==================== SHOP SYSTEM ====================
+
+// Games available in shop
+const shopGames = [
+    {
+        id: 1,
+        name: 'Flappy Bird',
+        emoji: '🐦',
+        cost: 10,
+        description: 'Navigate the bird through pipes',
+        fun: 'high'
+    },
+    {
+        id: 2,
+        name: 'Color Matcher',
+        emoji: '🎨',
+        cost: 15,
+        description: 'Match colors and patterns',
+        fun: 'medium'
+    },
+    {
+        id: 3,
+        name: 'Dino Runner',
+        emoji: '🦖',
+        cost: 20,
+        description: 'Jump obstacles and collect coins',
+        fun: 'high'
+    },
+    {
+        id: 4,
+        name: 'Bubble Pop',
+        emoji: '🫧',
+        cost: 5,
+        description: 'Pop bubbles as fast as you can',
+        fun: 'easy'
+    },
+    {
+        id: 5,
+        name: 'Treasure Hunt',
+        emoji: '🏴‍☠️',
+        cost: 25,
+        description: 'Find hidden treasures and unlock rewards',
+        fun: 'extreme'
+    },
+    {
+        id: 6,
+        name: 'Number Jump',
+        emoji: '🔢',
+        cost: 12,
+        description: 'Jump on correct numbers',
+        fun: 'medium'
+    }
+];
+
+async function openShop() {
+    // Switch to shop view
+    document.getElementById('dashboardView').classList.add('view-hidden');
+    document.getElementById('shopView').classList.remove('view-hidden');
+    document.getElementById('shopView').classList.add('view-active');
+    
+    // Load and display games
+    const progress = await fetch(`/api/progress/${currentUser.id}`).then(r => r.json()).catch(() => null);
+    
+    if (progress) {
+        document.getElementById('shopPoints').textContent = progress.points;
+    }
+    
+    const gamesGrid = document.getElementById('gamesGrid');
+    gamesGrid.innerHTML = '';
+    
+    shopGames.forEach(game => {
+        const gameCard = document.createElement('div');
+        gameCard.className = 'game-card';
+        gameCard.innerHTML = `
+            <h3>${game.emoji} ${game.name}</h3>
+            <p>${game.description}</p>
+            <div class="points">${game.cost} Points</div>
+            <button onclick="playShopGame(${game.id})">Play Now</button>
+        `;
+        gamesGrid.appendChild(gameCard);
+    });
+}
+
+function closeShop() {
+    document.getElementById('shopView').classList.remove('view-active');
+    document.getElementById('shopView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+}
+
+async function playShopGame(gameId) {
+    const game = shopGames.find(g => g.id === gameId);
+    
+    // Check if user has enough points
+    const progress = await fetch(`/api/progress/${currentUser.id}`).then(r => r.json()).catch(() => null);
+    
+    if (!progress || progress.points < game.cost) {
+        alert(`You need ${game.cost} points to play ${game.name}!\nYou have ${progress ? progress.points : 0} points.`);
+        return;
+    }
+    
+    showFeedback(`🎮 Starting ${game.name}!`, 'excellent');
+    
+    // Close shop and open appropriate game
+    document.getElementById('shopView').classList.remove('view-active');
+    document.getElementById('shopView').classList.add('view-hidden');
+    document.getElementById('gamePlayView').classList.remove('view-hidden');
+    document.getElementById('gamePlayView').classList.add('view-active');
+    
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    const gameTitle = document.getElementById('currentGameTitle');
+    gameTitle.textContent = `${game.emoji} ${game.name}`;
+    
+    // Display different game based on gameId
+    switch(gameId) {
+        case 1:
+            playFlappyBird();
+            break;
+        case 2:
+            playColorMatcher();
+            break;
+        case 3:
+            playDinoRunner();
+            break;
+        case 4:
+            playBubblePop();
+            break;
+        case 5:
+            playTreasureHunt();
+            break;
+        case 6:
+            playNumberJump();
+            break;
+        default:
+            gamePlayArea.innerHTML = '<p>Game loading...</p>';
+    }
+}
+
+function playFlappyBird() {
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    gamePlayArea.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <p style="font-size: 3rem;">🐦</p>
+            <p>Click or press SPACE to make the bird jump!</p>
+            <canvas id="flappyCanvas" width="400" height="500" style="background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%); border: 2px solid #333; border-radius: 5px;"></canvas>
+            <p style="margin-top: 20px; font-weight: bold;">Score: <span id="flappyScore">0</span></p>
+        </div>
+    `;
+    // Simplified Flappy Bird
+    const canvas = document.getElementById('flappyCanvas');
+    const ctx = canvas.getContext('2d');
+    let gameActive = true;
+    
+    showFeedback('Good Job! Game Started!', 'excellent');
+}
+
+function playColorMatcher() {
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+    let score = 0;
+    let gameActive = true;
+    
+    gamePlayArea.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <p style="font-size: 3rem;">🎨</p>
+            <p>Match the colors!</p>
+            <div id="colorGrid" style="display: grid; grid-template-columns: repeat(3, 100px); gap: 10px; margin: 20px auto; width: fit-content;"></div>
+            <p style="margin-top: 20px; font-weight: bold;">Score: <span id="colorScore">0</span>/6</p>
+        </div>
+    `;
+    
+    const colorGrid = document.getElementById('colorGrid');
+    colors.forEach(color => {
+        const btn = document.createElement('button');
+        btn.style.width = '100px';
+        btn.style.height = '100px';
+        btn.style.backgroundColor = color;
+        btn.style.border = 'none';
+        btn.style.borderRadius = '5px';
+        btn.style.cursor = 'pointer';
+        btn.style.transition = 'transform 0.2s';
+        btn.onclick = () => {
+            score++;
+            document.getElementById('colorScore').textContent = score;
+            if (score === 6) {
+                showFeedback('Perfect! All Matched!', 'perfect');
+            }
+            btn.style.transform = 'scale(1.2)';
+            setTimeout(() => btn.style.transform = 'scale(1)', 200);
+        };
+        colorGrid.appendChild(btn);
+    });
+    
+    showFeedback('Good Job! Color Matching Started!', 'excellent');
+}
+
+function playDinoRunner() {
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    gamePlayArea.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <p style="font-size: 3rem;">🦖</p>
+            <p>Jump over obstacles!</p>
+            <canvas id="dinoCanvas" width="400" height="300" style="background: linear-gradient(180deg, #87CEEB 0%, #90EE90 100%); border: 2px solid #333; border-radius: 5px;"></canvas>
+            <p style="margin-top: 20px; font-weight: bold;">Score: <span id="dinoScore">0</span></p>
+        </div>
+    `;
+    
+    showFeedback('Good Job! Dino Running Started!', 'excellent');
+}
+
+function playBubblePop() {
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    let score = 0;
+    const bubbleCount = 20;
+    
+    gamePlayArea.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <p style="font-size: 3rem;">🫧</p>
+            <p>Pop all the bubbles!</p>
+            <div id="bubbleContainer" style="position: relative; width: 400px; height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 20px auto; border-radius: 10px; overflow: hidden;"></div>
+            <p style="margin-top: 20px; font-weight: bold;">Score: <span id="bubbleScore">0</span>/${bubbleCount}</p>
+        </div>
+    `;
+    
+    const container = document.getElementById('bubbleContainer');
+    for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.style.width = '30px';
+        bubble.style.height = '30px';
+        bubble.style.backgroundColor = '#fff';
+        bubble.style.borderRadius = '50%';
+        bubble.style.position = 'absolute';
+        bubble.style.left = Math.random() * 370 + 'px';
+        bubble.style.top = Math.random() * 370 + 'px';
+        bubble.style.cursor = 'pointer';
+        bubble.style.transition = 'transform 0.1s';
+        
+        bubble.onclick = (e) => {
+            e.stopPropagation();
+            score++;
+            document.getElementById('bubbleScore').textContent = score;
+            bubble.style.transform = 'scale(0)';
+            if (score === bubbleCount) {
+                showFeedback('Perfect! All Bubbles Popped!', 'perfect');
+            }
+        };
+        
+        container.appendChild(bubble);
+    }
+    
+    showFeedback('Good Job! Bubble Pop Started!', 'excellent');
+}
+
+function playTreasureHunt() {
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    gamePlayArea.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <p style="font-size: 3rem;">🏴‍☠️</p>
+            <p>Find the hidden treasure!</p>
+            <div id="treasureGrid" style="display: grid; grid-template-columns: repeat(4, 80px); gap: 10px; margin: 20px auto; width: fit-content;"></div>
+            <p style="margin-top: 20px; font-weight: bold;">Found: <span id="treasureFound">0</span>/1</p>
+        </div>
+    `;
+    
+    const grid = document.getElementById('treasureGrid');
+    const treasurePosition = Math.floor(Math.random() * 16);
+    
+    for (let i = 0; i < 16; i++) {
+        const tile = document.createElement('button');
+        tile.style.width = '80px';
+        tile.style.height = '80px';
+        tile.style.fontSize = '2rem';
+        tile.style.border = '2px solid #333';
+        tile.style.borderRadius = '5px';
+        tile.style.cursor = 'pointer';
+        tile.style.background = '#FFD700';
+        tile.textContent = '?';
+        
+        tile.onclick = () => {
+            if (i === treasurePosition) {
+                tile.textContent = '💰';
+                tile.disabled = true;
+                document.getElementById('treasureFound').textContent = '1';
+                showFeedback('Found the Treasure!', 'perfect');
+            } else {
+                tile.textContent = '❌';
+                tile.disabled = true;
+            }
+        };
+        
+        grid.appendChild(tile);
+    }
+    
+    showFeedback('Good Job! Treasure Hunt Started!', 'excellent');
+}
+
+function playNumberJump() {
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    let score = 0;
+    let currentNumber = 1;
+    
+    gamePlayArea.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+            <p style="font-size: 3rem;">🔢</p>
+            <p>Jump on the correct numbers in order!</p>
+            <p style="font-size: 2rem; margin: 20px 0;">Next: <span id="nextNumber" style="color: #667eea; font-weight: bold;">1</span></p>
+            <div id="numberGrid" style="display: grid; grid-template-columns: repeat(4, 80px); gap: 10px; margin: 20px auto; width: fit-content;"></div>
+            <p style="margin-top: 20px; font-weight: bold;">Score: <span id="numberScore">0</span>/10</p>
+        </div>
+    `;
+    
+    const grid = document.getElementById('numberGrid');
+    const numbers = Array.from({length: 10}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+    
+    numbers.forEach(num => {
+        const btn = document.createElement('button');
+        btn.textContent = num;
+        btn.style.width = '80px';
+        btn.style.height = '80px';
+        btn.style.fontSize = '1.5rem';
+        btn.style.fontWeight = 'bold';
+        btn.style.border = '2px solid #333';
+        btn.style.borderRadius = '5px';
+        btn.style.cursor = 'pointer';
+        btn.style.background = '#fff';
+        btn.style.transition = 'all 0.2s';
+        
+        btn.onclick = () => {
+            if (num === currentNumber) {
+                score++;
+                currentNumber++;
+                btn.disabled = true;
+                btn.style.background = '#4CAF50';
+                btn.style.color = 'white';
+                document.getElementById('numberScore').textContent = score;
+                document.getElementById('nextNumber').textContent = currentNumber;
+                showFeedback('Good Jump!', 'excellent');
+                
+                if (score === 10) {
+                    showFeedback('Perfect! All Numbers!', 'perfect');
+                }
+            } else {
+                btn.style.background = '#f44336';
+                btn.style.color = 'white';
+            }
+        };
+        
+        grid.appendChild(btn);
+    });
+    
+    showFeedback('Good Job! Number Jump Started!', 'excellent');
+}
+
+// ==================== LEADERBOARD SYSTEM ====================
+
+async function viewLeaderboard() {
+    try {
+        const response = await fetch('/api/leaderboard');
+        const leaderboard = await response.json();
+        
+        // Switch to leaderboard view
+        document.getElementById('dashboardView').classList.add('view-hidden');
+        document.getElementById('leaderboardView').classList.remove('view-hidden');
+        document.getElementById('leaderboardView').classList.add('view-active');
+        
+        // Display leaderboard with enhanced styling
+        const tbody = document.getElementById('leaderboardBody');
+        tbody.innerHTML = '';
+        
+        leaderboard.forEach((entry, index) => {
+            const row = document.createElement('tr');
+            
+            // Add special styling for top 3
+            let rankCell = index + 1;
+            if (index === 0) rankCell = `🥇 ${rankCell}`;
+            else if (index === 1) rankCell = `🥈 ${rankCell}`;
+            else if (index === 2) rankCell = `🥉 ${rankCell}`;
+            
+            row.innerHTML = `
+                <td><strong>${rankCell}</strong></td>
+                <td><strong>${entry.userName}</strong></td>
+                <td><span class="points-badge">${entry.points}</span></td>
+                <td><span class="game-count-badge">${entry.totalGamesPlayed}</span></td>
+            `;
+            
+            // Highlight current user
+            if (currentUser && entry.userId === currentUser.id) {
+                row.classList.add('current-user');
+            }
+            
+            tbody.appendChild(row);
+        });
+        
+        showFeedback('Worldwide Rankings!', 'excellent');
+    } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        alert('Error loading leaderboard');
+    }
+}
+
+function closeLeaderboard() {
+    document.getElementById('leaderboardView').classList.remove('view-active');
+    document.getElementById('leaderboardView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+}
+
+// ==================== ASSIGNMENTS SYSTEM ====================
+
+async function viewAssignments(type) {
+    try {
+        const grade = currentUser.grade;
+        const response = await fetch(`/api/assignments/${grade}/${type}`);
+        
+        if (response.ok) {
+            const assignments = await response.json();
+            
+            // Switch to assignments view
+            document.getElementById('dashboardView').classList.add('view-hidden');
+            document.getElementById('assignmentsView').classList.remove('view-hidden');
+            document.getElementById('assignmentsView').classList.add('view-active');
+            
+            // Update title
+            const typeNames = { art: '🎨 Art', music: '🎵 Music', pe: '⚽ Physical Education' };
+            document.getElementById('assignmentsTitle').textContent = typeNames[type] + ' Assignments';
+            
+            // Display assignments
+            const assignmentsList = document.getElementById('assignmentsList');
+            assignmentsList.innerHTML = '';
+            
+            assignments.forEach((assignment, index) => {
+                const card = document.createElement('div');
+                card.className = 'assignment-card';
+                
+                let uploadSection = '';
+                if (type === 'art') {
+                    uploadSection = `
+                        <div class="file-upload-section">
+                            <label for="artFile-${index}">📸 Upload your artwork:</label>
+                            <input type="file" id="artFile-${index}" accept="image/*" style="margin: 10px 0;">
+                            <button onclick="submitArtAssignment(${index}, '${assignment.title}')" class="btn-primary btn-small">Submit Artwork</button>
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <h3>${assignment.title}</h3>
+                    <p>${assignment.description}</p>
+                    <div class="assignment-instructions">
+                        <strong>Instructions:</strong><br>
+                        ${assignment.instructions}
+                    </div>
+                    <span class="assignment-points">⭐ ${assignment.points} points</span>
+                    ${uploadSection}
+                `;
+                assignmentsList.appendChild(card);
+            });
+        } else {
+            alert('No assignments available for this grade');
+        }
+    } catch (error) {
+        console.error('Error loading assignments:', error);
+        alert('Error loading assignments');
+    }
+}
+
+function submitArtAssignment(index, assignmentTitle) {
+    const fileInput = document.getElementById(`artFile-${index}`);
+    
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Please select an image file first');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file');
+        return;
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+    }
+    
+    // Show feedback for successful submission
+    showFeedback(`✅ ${assignmentTitle} submitted!`, 'perfect');
+    
+    // Simulate upload and award points
+    setTimeout(() => {
+        // Award 10 bonus points for art submission
+        const pointsEarned = 10;
+        alert(`🎉 Assignment submitted!\n\nYou earned ${pointsEarned} bonus points for your artwork!`);
+        
+        // Reset file input
+        fileInput.value = '';
+    }, 1000);
+}
+
+function closeAssignments() {
+    document.getElementById('assignmentsView').classList.remove('view-active');
+    document.getElementById('assignmentsView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+}
+
+// ==================== BOARD GAMES ====================
+
+async function viewBoardGames() {
+    try {
+        // Get board games from server
+        const response = await fetch('/api/board-games');
+        const games = await response.json();
+        
+        // Display games
+        const grid = document.getElementById('gamesSelectionGrid');
+        grid.innerHTML = '';
+        
+        games.games.forEach(game => {
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card';
+            gameCard.innerHTML = `
+                <div class="game-card-name">${game.name}</div>
+                <div class="game-card-description">${game.description}</div>
+                <div class="game-card-difficulty">Difficulty: ${game.difficulty.charAt(0).toUpperCase() + game.difficulty.slice(1)}</div>
+                <div class="game-card-points">+${game.points} Points</div>
+                <button onclick="playGame('${game.name}', ${game.points})">Play Now</button>
+            `;
+            grid.appendChild(gameCard);
+        });
+        
+        // Update points display
+        document.getElementById('bgPointsCount').textContent = currentUser.id;
+        
+        // Switch views
+        document.getElementById('dashboardView').classList.remove('view-active');
+        document.getElementById('dashboardView').classList.add('view-hidden');
+        document.getElementById('boardGamesView').classList.remove('view-hidden');
+        document.getElementById('boardGamesView').classList.add('view-active');
+    } catch (error) {
+        console.error('Error loading board games:', error);
+        alert('Error loading board games');
+    }
+}
+
+function closeBoardGames() {
+    document.getElementById('boardGamesView').classList.remove('view-active');
+    document.getElementById('boardGamesView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+}
+
+let currentGame = null;
+
+function playGame(gameName, points) {
+    currentGame = { name: gameName, points: points };
+    const gamePlayArea = document.getElementById('gamePlayArea');
+    const gameTitle = document.getElementById('currentGameTitle');
+    
+    gameTitle.textContent = gameName;
+    
+    // Clear previous game content
+    gamePlayArea.innerHTML = '';
+    
+    // Initialize different games based on name
+    if (gameName.includes('Chess')) {
+        initializeChess(gamePlayArea);
+    } else if (gameName.includes('Chinese Checkers')) {
+        initializeChineseCheckers(gamePlayArea);
+    } else if (gameName.includes('Checkers')) {
+        initializeCheckers(gamePlayArea);
+    } else if (gameName.includes('Connect Four')) {
+        initializeConnectFour(gamePlayArea);
+    } else if (gameName.includes('Sudoku')) {
+        initializeSudoku(gamePlayArea);
+    } else if (gameName.includes('Rubik')) {
+        initializeRubiksCube(gamePlayArea);
+    } else if (gameName.includes('Tic-Tac-Toe')) {
+        initializeTicTacToe(gamePlayArea);
+    }
+    
+    // Switch views
+    document.getElementById('boardGamesView').classList.remove('view-active');
+    document.getElementById('boardGamesView').classList.add('view-hidden');
+    document.getElementById('gamePlayView').classList.remove('view-hidden');
+    document.getElementById('gamePlayView').classList.add('view-active');
+}
+
+function closeGamePlay() {
+    document.getElementById('gamePlayView').classList.remove('view-active');
+    document.getElementById('gamePlayView').classList.add('view-hidden');
+    document.getElementById('boardGamesView').classList.remove('view-hidden');
+    document.getElementById('boardGamesView').classList.add('view-active');
+    currentGame = null;
+}
+
+// Chess Game Initialization
+function initializeChess(container) {
+    const board = document.createElement('div');
+    board.className = 'chess-board';
+    
+    const pieces = {
+        '0,0': '♜', '0,1': '♞', '0,2': '♝', '0,3': '♛', '0,4': '♚', '0,5': '♝', '0,6': '♞', '0,7': '♜',
+        '1,0': '♟', '1,1': '♟', '1,2': '♟', '1,3': '♟', '1,4': '♟', '1,5': '♟', '1,6': '♟', '1,7': '♟',
+        '6,0': '♙', '6,1': '♙', '6,2': '♙', '6,3': '♙', '6,4': '♙', '6,5': '♙', '6,6': '♙', '6,7': '♙',
+        '7,0': '♖', '7,1': '♘', '7,2': '♗', '7,3': '♕', '7,4': '♔', '7,5': '♗', '7,6': '♘', '7,7': '♖'
+    };
+    
+    for (let i = 0; i < 64; i++) {
+        const row = Math.floor(i / 8);
+        const col = i % 8;
+        const square = document.createElement('div');
+        square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'chess-square-light' : 'chess-square-dark');
+        const piece = pieces[`${row},${col}`];
+        if (piece) square.textContent = piece;
+        board.appendChild(square);
+    }
+    
+    const info = document.createElement('div');
+    info.className = 'game-info';
+    info.innerHTML = `
+        <div class="game-status">♔ White to Move</div>
+        <p>Chess is a game of strategy. Learn opening principles, develop pieces, and control the center!</p>
+        <button onclick="closeGamePlay()" class="btn-secondary" style="margin-top: 15px;">Back to Games</button>
+    `;
+    
+    container.appendChild(board);
+    container.appendChild(info);
+}
+
+// Chinese Checkers Game Initialization
+function initializeChineseCheckers(container) {
+    const board = document.createElement('div');
+    board.style.cssText = 'text-align: center; padding: 20px;';
+    board.innerHTML = `
+        <h3>🔴 Chinese Checkers</h3>
+        <p style="margin: 20px 0;">Race your pieces to the opposite corner!</p>
+        <div style="background: #f0f0f0; padding: 30px; border-radius: 8px; margin: 20px auto; max-width: 400px;">
+            <p style="font-size: 2rem; margin: 20px 0;">🔴🔵🔴🔵</p>
+            <p style="font-size: 2rem; margin: 20px 0;">🔵⬜⬜🔴</p>
+            <p style="font-size: 2rem; margin: 20px 0;">🔴⬜⬜🔵</p>
+            <p style="font-size: 2rem; margin: 20px 0;">🔵🔴🔵🔴</p>
+        </div>
+        <p><strong>Goal:</strong> Move all your pieces to the opposite triangle before your opponent!</p>
+        <button onclick="closeGamePlay()" class="btn-secondary" style="margin-top: 15px;">Back to Games</button>
+    `;
+    container.appendChild(board);
+}
+
+// Checkers Game Initialization
+function initializeCheckers(container) {
+    const board = document.createElement('div');
+    board.style.cssText = 'display: grid; grid-template-columns: repeat(8, 1fr); gap: 0; width: 320px; height: 320px; margin: 20px auto;';
+    
+    for (let i = 0; i < 64; i++) {
+        const square = document.createElement('div');
+        const row = Math.floor(i / 8);
+        const col = i % 8;
+        
+        if ((row + col) % 2 === 0) {
+            square.style.backgroundColor = '#F0D9B5';
+        } else {
+            square.style.backgroundColor = '#B58863';
+            // Add starting pieces
+            if (row < 3) {
+                square.innerHTML = '⚫';
+                square.style.display = 'flex';
+                square.style.justifyContent = 'center';
+                square.style.alignItems = 'center';
+                square.style.fontSize = '2rem';
+            } else if (row > 4) {
+                square.innerHTML = '⚪';
+                square.style.display = 'flex';
+                square.style.justifyContent = 'center';
+                square.style.alignItems = 'center';
+                square.style.fontSize = '2rem';
+            }
+        }
+        board.appendChild(square);
+    }
+    
+    const info = document.createElement('div');
+    info.className = 'game-info';
+    info.innerHTML = `
+        <div class="game-status">⚫ Black's Turn</div>
+        <p>Jump over opponent pieces to capture them. First to eliminate all opponent pieces wins!</p>
+        <button onclick="closeGamePlay()" class="btn-secondary" style="margin-top: 15px;">Back to Games</button>
+    `;
+    
+    container.appendChild(board);
+    container.appendChild(info);
+}
+
+// Connect Four Game Initialization
+function initializeConnectFour(container) {
+    const board = document.createElement('div');
+    board.style.cssText = 'display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; width: 350px; margin: 20px auto; background: blue; padding: 10px; border-radius: 8px;';
+    
+    for (let i = 0; i < 42; i++) {
+        const circle = document.createElement('div');
+        circle.style.cssText = 'width: 40px; height: 40px; background: yellow; border-radius: 50%; cursor: pointer; transition: all 0.2s;';
+        circle.onmouseover = () => circle.style.opacity = '0.7';
+        circle.onmouseout = () => circle.style.opacity = '1';
+        board.appendChild(circle);
+    }
+    
+    const info = document.createElement('div');
+    info.className = 'game-info';
+    info.innerHTML = `
+        <div class="game-status">🟡 Player 1's Turn</div>
+        <p>Drop your pieces to get four in a row horizontally, vertically, or diagonally!</p>
+        <button onclick="closeGamePlay()" class="btn-secondary" style="margin-top: 15px;">Back to Games</button>
+    `;
+    
+    container.appendChild(board);
+    container.appendChild(info);
+}
+
+// Sudoku Game Initialization
+function initializeSudoku(container) {
+    const board = document.createElement('div');
+    board.style.cssText = 'display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; width: 360px; height: 360px; margin: 20px auto; background: #333; padding: 5px;';
+    
+    const sudokuPuzzle = [
+        [5,3,0,0,7,0,0,0,0],
+        [6,0,0,1,9,5,0,0,0],
+        [0,9,8,0,0,0,0,6,0],
+        [8,0,0,0,6,0,0,0,3],
+        [4,0,0,8,0,3,0,0,1],
+        [7,0,0,0,2,0,0,0,6],
+        [0,6,0,0,0,0,2,8,0],
+        [0,0,0,4,1,9,0,0,5],
+        [0,0,0,0,8,0,0,7,9]
+    ];
+    
+    sudokuPuzzle.forEach((row, r) => {
+        row.forEach((num, c) => {
+            const cell = document.createElement('input');
+            cell.type = 'text';
+            cell.maxLength = '1';
+            cell.style.cssText = `
+                width: 40px; height: 40px; text-align: center; font-size: 1.1rem; font-weight: bold;
+                border: ${(c + 1) % 3 === 0 && c !== 8 ? '3px solid #333' : '1px solid #999'};
+                border-right: ${(c + 1) % 3 === 0 && c !== 8 ? '3px solid #333' : '1px solid #999'};
+                border-bottom: ${(r + 1) % 3 === 0 && r !== 8 ? '3px solid #333' : '1px solid #999'};
+                background: ${num === 0 ? 'white' : '#e0e0e0'};
+            `;
+            if (num !== 0) {
+                cell.value = num;
+                cell.disabled = true;
+            }
+            board.appendChild(cell);
+        });
+    });
+    
+    const info = document.createElement('div');
+    info.className = 'game-info';
+    info.innerHTML = `
+        <div class="game-status">🔢 Sudoku Puzzle</div>
+        <p>Fill in the grid so each row, column, and 3x3 box contains the numbers 1-9!</p>
+        <button onclick="closeGamePlay()" class="btn-secondary" style="margin-top: 15px;">Back to Games</button>
+    `;
+    
+    container.appendChild(board);
+    container.appendChild(info);
+}
+
+// Rubik's Cube Game Initialization
+function initializeRubiksCube(container) {
+    const cube = document.createElement('div');
+    cube.style.cssText = 'text-align: center; padding: 20px;';
+    cube.innerHTML = `
+        <h3>🧩 Rubik's Cube Solver</h3>
+        <div style="font-size: 4rem; margin: 20px 0;">🧩</div>
+        <p style="font-size: 1.2rem; margin: 20px 0;"><strong>Front Face</strong></p>
+        <div style="display: grid; grid-template-columns: repeat(3, 40px); gap: 5px; margin: 0 auto 20px; width: fit-content;">
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FFD700; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+            <div style="width: 40px; height: 40px; background: #FF0000; border: 2px solid #000;"></div>
+        </div>
+        <p><strong>Goal:</strong> Solve the Rubik's Cube by using layer-by-layer solving techniques!</p>
+        <button onclick="closeGamePlay()" class="btn-secondary" style="margin-top: 15px;">Back to Games</button>
+    `;
+    container.appendChild(cube);
+}
+
+// Tic-Tac-Toe Game Initialization
+function initializeTicTacToe(container) {
+    const board = document.createElement('div');
+    board.style.cssText = 'display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 180px; margin: 20px auto;';
+    
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('button');
+        cell.style.cssText = 'width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold; cursor: pointer; background: #f0f0f0; border: 2px solid #333; border-radius: 5px;';
+        cell.textContent = '';
+        board.appendChild(cell);
+    }
+    
+    const info = document.createElement('div');
+    info.className = 'game-info';
+    info.innerHTML = `
+        <div class="game-status">❌ Player 1's Turn</div>
+        <p>Get three in a row to win! You're X, the computer is O.</p>
+        <button onclick="closeGamePlay()" class="btn-secondary" style="margin-top: 15px;">Back to Games</button>
+    `;
+    
+    container.appendChild(board);
+    container.appendChild(info);
+}
+
+// ==================== GRADE CONTENT VIEWER ====================
+
+let selectedGradeForQuiz = null;
+
+async function viewGradeContent(grade) {
+    try {
+        selectedGradeForQuiz = grade;
+        
+        // Fetch quizzes for the selected grade
+        const response = await fetch(`/api/quizzes/${grade}/reading/easy`);
+        
+        if (response.ok) {
+            // Switch to grade content view
+            document.getElementById('dashboardView').classList.add('view-hidden');
+            document.getElementById('gradeContentView').classList.remove('view-hidden');
+            document.getElementById('gradeContentView').classList.add('view-active');
+            
+            // Update title
+            document.getElementById('gradeContentTitle').textContent = `📚 ${grade} - Learning Content`;
+            
+            // Get all subjects for the grade
+            const subjects = ['reading', 'math', 'science', 'social studies', 'writing'];
+            const gradeContentBody = document.getElementById('gradeContentBody');
+            gradeContentBody.innerHTML = '';
+            
+            for (const subject of subjects) {
+                try {
+                    // Fetch sample questions for each subject
+                    const quizResponse = await fetch(`/api/quizzes/${grade}/${subject}/easy`);
+                    
+                    if (quizResponse.ok) {
+                        const quizData = await quizResponse.json();
+                        
+                        if (quizData.questions && quizData.questions.length > 0) {
+                            const card = document.createElement('div');
+                            card.className = 'grade-subject-card';
+                            
+                            const subjectEmojis = {
+                                'reading': '📖',
+                                'math': '🔢',
+                                'science': '🔬',
+                                'social studies': '🌍',
+                                'writing': '✏️'
+                            };
+                            
+                            const emoji = subjectEmojis[subject] || '📚';
+                            
+                            // Show first 2 sample questions
+                            const sampleQuestions = quizData.questions.slice(0, 2);
+                            let questionsHTML = '';
+                            sampleQuestions.forEach((q, idx) => {
+                                questionsHTML += `
+                                    <div class="subject-preview">
+                                        <p><strong>Q${idx + 1}:</strong> ${q.question}</p>
+                                        <p><em>Correct answer: ${q.options[q.correctAnswer]}</em></p>
+                                    </div>
+                                `;
+                            });
+                            
+                            card.innerHTML = `
+                                <h3>${emoji} ${subject.charAt(0).toUpperCase() + subject.slice(1)}</h3>
+                                ${questionsHTML}
+                                <span class="question-count">📝 ${quizData.questions.length} questions</span>
+                                <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button onclick="startGradeQuiz('${grade}', '${subject}', 'easy')" class="btn-primary btn-small">Easy Quiz</button>
+                                    <button onclick="startGradeQuiz('${grade}', '${subject}', 'medium')" class="btn-primary btn-small">Medium Quiz</button>
+                                    <button onclick="startGradeQuiz('${grade}', '${subject}', 'hard')" class="btn-primary btn-small">Hard Quiz</button>
+                                </div>
+                            `;
+                            
+                            gradeContentBody.appendChild(card);
+                        }
+                    }
+                } catch (error) {
+                    // Subject not available for this grade
+                }
+            }
+            
+            // Show feedback
+            showFeedback(`Viewing ${grade} content!`, 'excellent');
+        }
+    } catch (error) {
+        console.error('Error loading grade content:', error);
+        alert('Error loading grade content');
+    }
+}
+
+async function startGradeQuiz(grade, subject, difficulty) {
+    try {
+        const response = await fetch(`/api/quizzes/${grade}/${subject}/${difficulty}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            quizQuestions = data.questions;
+            currentQuestionIndex = 0;
+            userAnswer = null;
+            
+            currentQuiz = {
+                subject: subject,
+                difficulty: difficulty,
+                grade: grade
+            };
+            
+            // Switch to quiz view
+            document.getElementById('gradeContentView').classList.add('view-hidden');
+            document.getElementById('quizView').classList.remove('view-hidden');
+            document.getElementById('quizView').classList.add('view-active');
+            
+            // Display first question
+            displayQuestion();
+            
+            showFeedback(`Starting ${grade} ${subject} ${difficulty}!`, 'excellent');
+        }
+    } catch (error) {
+        console.error('Error starting quiz:', error);
+        alert('Error starting quiz');
+    }
+}
+
+function backToDashboard() {
+    document.getElementById('gradeContentView').classList.remove('view-active');
+    document.getElementById('gradeContentView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+    document.getElementById('dashboardView').classList.add('view-active');
+}
+
+// ==================== INITIALIZATION ====================
+
+// Load users on page load
+document.addEventListener('DOMContentLoaded', fetchUsers);
+

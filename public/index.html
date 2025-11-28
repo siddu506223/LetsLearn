@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lets Learn - Edu Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Title Screen View -->
+    <div id="titleView" class="container view-active">
+        <div class="title-screen">
+            <div class="title-content">
+                <h1 class="title-main">Lets Learn</h1>
+                <p class="title-subtitle">by Ni Ni Academy</p>
+                <div class="title-divider"></div>
+                <p class="title-description">Discover, Learn, and Grow</p>
+                <button onclick="goToLoginScreen()" class="btn-primary btn-large btn-pulse">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login/Signup View -->
+    <div id="loginView" class="container view-hidden">
+        <div class="login-container">
+            <div class="login-box">
+                <h1>Edu Platform</h1>
+                <div class="login-tabs">
+                    <button id="loginTab" class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+                    <button id="signupTab" class="tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+                </div>
+                
+                <!-- Login Form -->
+                <div id="loginForm" class="auth-form active-form">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button onclick="handleLogin()" class="btn-primary btn-full">Login</button>
+                    <button onclick="backToTitle()" class="btn-secondary btn-full">Back</button>
+                </div>
+                
+                <!-- Signup Form -->
+                <div id="signupForm" class="auth-form">
+                    <input type="text" id="signupFirstName" placeholder="First Name" required>
+                    <input type="text" id="signupLastName" placeholder="Last Name" required>
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                    <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required>
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
+                    <button onclick="handleSignup()" class="btn-primary btn-full">Create Account</button>
+                    <button onclick="backToTitle()" class="btn-secondary btn-full">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management View - REMOVED (no longer needed) -->
+
+    <!-- Dashboard View for Kindergarten -->
+    <div id="dashboardView" class="container view-hidden">
+        <div class="dashboard-header">
+            <h1 id="studentName"></h1>
+            <div class="points-display">
+                <span id="pointsCount">0</span> / 30 Points
+                <span id="minigameStatus"></span>
+            </div>
+            <div class="dashboard-buttons">
+                <button onclick="viewLeaderboard()" class="btn-info">🏆 Leaderboard</button>
+                <button onclick="openShop()" class="btn-warning">🛍️ Game Shop</button>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="subject-card">
+                <h2>📖 Reading</h2>
+                <div class="difficulty-buttons">
+                    <button onclick="startQuiz('reading', 'easy')">Easy</button>
+                    <button onclick="startQuiz('reading', 'medium')">Medium</button>
+                    <button onclick="startQuiz('reading', 'hard')">Advanced</button>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <h2>🔢 Math</h2>
+                <div class="difficulty-buttons">
+                    <button onclick="startQuiz('math', 'easy')">Easy</button>
+                    <button onclick="startQuiz('math', 'medium')">Medium</button>
+                    <button onclick="startQuiz('math', 'hard')">Advanced</button>
+                </div>
+            </div>
+
+            <div class="subject-card">
+                <h2>✏️ Writing</h2>
+                <div class="difficulty-buttons">
+                    <button onclick="startQuiz('writing', 'easy')">Easy</button>
+                    <button onclick="startQuiz('writing', 'medium')">Medium</button>
+                    <button onclick="startQuiz('writing', 'hard')">Advanced</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="minigameCard" class="section" style="display: none;">
+            <h2>🎮 Minigame (Unlocked!)</h2>
+            <p>You've earned 30 points! Click below to play a fun minigame.</p>
+            <button onclick="playMinigame()" class="btn-success">Play Minigame</button>
+        </div>
+
+        <div id="assignmentsSection" style="display: none;">
+            <h2>Creative & Physical Activities (2nd Grade)</h2>
+            <div class="dashboard-grid">
+                <div class="subject-card">
+                    <h3>🎨 Art</h3>
+                    <p>Learn about colors, shapes, and creativity</p>
+                    <button onclick="viewAssignments('art')" class="btn-info">View Assignments</button>
+                </div>
+
+                <div class="subject-card">
+                    <h3>🎵 Music</h3>
+                    <p>Explore instruments and rhythm</p>
+                    <button onclick="viewAssignments('music')" class="btn-info">View Assignments</button>
+                </div>
+
+                <div class="subject-card">
+                    <h3>⚽ Physical Education</h3>
+                    <p>Stay active and healthy</p>
+                    <button onclick="viewAssignments('pe')" class="btn-info">View Assignments</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="boardGamesSection" style="display: none;">
+            <h2>🧠 Board & Logic Strengthening Games</h2>
+            <p>Challenge your mind with strategic games that develop problem-solving and critical thinking skills.</p>
+            <button onclick="viewBoardGames()" class="btn-success" style="margin-top: 10px; font-size: 1.1em; padding: 12px 24px;">🎮 Play Board Games</button>
+        </div>
+
+        <div class="section">
+            <h2>📚 Explore Other Grades</h2>
+            <p>See what students in other grades are learning!</p>
+            <div class="grade-explorer-grid">
+                <button onclick="viewGradeContent('Kindergarten')" class="grade-btn">👶 Kindergarten</button>
+                <button onclick="viewGradeContent('1st grade')" class="grade-btn">1️⃣ 1st Grade</button>
+                <button onclick="viewGradeContent('2nd grade')" class="grade-btn">2️⃣ 2nd Grade</button>
+                <button onclick="viewGradeContent('3rd grade')" class="grade-btn">3️⃣ 3rd Grade</button>
+                <button onclick="viewGradeContent('4th grade')" class="grade-btn">4️⃣ 4th Grade</button>
+                <button onclick="viewGradeContent('5th grade')" class="grade-btn">5️⃣ 5th Grade</button>
+                <button onclick="viewGradeContent('6th grade')" class="grade-btn">6️⃣ 6th Grade</button>
+                <button onclick="viewGradeContent('7th grade')" class="grade-btn">7️⃣ 7th Grade</button>
+                <button onclick="viewGradeContent('8th grade')" class="grade-btn">8️⃣ 8th Grade</button>
+                <button onclick="viewGradeContent('9th grade')" class="grade-btn">9️⃣ 9th Grade</button>
+                <button onclick="viewGradeContent('10th grade')" class="grade-btn">🔟 10th Grade</button>
+                <button onclick="viewGradeContent('11th grade')" class="grade-btn">1️⃣1️⃣ 11th Grade</button>
+                <button onclick="viewGradeContent('12th grade')" class="grade-btn">1️⃣2️⃣ 12th Grade</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz View -->
+    <div id="quizView" class="container view-hidden">
+        <div class="quiz-header">
+            <h2 id="quizTitle"></h2>
+            <div class="quiz-info">
+                <span id="questionNumber"></span>
+                <span id="userPointsQuiz">Points: 0</span>
+            </div>
+        </div>
+
+        <div class="quiz-container">
+            <div id="questionDisplay"></div>
+            <div id="optionsDisplay" class="options-grid"></div>
+            <div id="resultDisplay" class="result-hidden"></div>
+            <div id="explanationDisplay" class="explanation-hidden"></div>
+            <button id="nextBtn" onclick="nextQuestion()" style="display: none;" class="btn-primary">Next Question</button>
+            <button onclick="exitQuiz()" class="btn-secondary">Exit Quiz</button>
+        </div>
+    </div>
+
+    <!-- Minigame View -->
+    <div id="minigameView" class="container view-hidden">
+        <div class="minigame-header">
+            <h1>🎮 Memory Match Game</h1>
+            <button onclick="exitMinigame()" class="btn-secondary">Exit Game</button>
+        </div>
+        <div id="gameBoard" class="game-board"></div>
+        <div id="gameMessage"></div>
+    </div>
+
+    <!-- Shop View -->
+    <div id="shopView" class="container view-hidden">
+        <div class="shop-header">
+            <h1>🛍️ Game Shop</h1>
+            <div>
+                <span class="user-points">Your Points: <span id="shopPoints">0</span></span>
+                <button onclick="closeShop()" class="btn-secondary">Back to Dashboard</button>
+            </div>
+        </div>
+        <div class="games-grid" id="gamesGrid"></div>
+    </div>
+
+    <!-- Assignments View -->
+    <div id="assignmentsView" class="container view-hidden">
+        <div class="assignments-header">
+            <h1 id="assignmentsTitle">Assignments</h1>
+            <button onclick="closeAssignments()" class="btn-secondary">Back to Dashboard</button>
+        </div>
+        <div id="assignmentsList" class="assignments-grid">
+            <!-- Assignments will be populated here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Leaderboard View -->
+    <div id="leaderboardView" class="container view-hidden">
+        <div class="leaderboard-header">
+            <h1>🏆 Global Leaderboard</h1>
+            <button onclick="closeLeaderboard()" class="btn-secondary">Back to Dashboard</button>
+        </div>
+        <table id="leaderboardTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Points</th>
+                    <th>Games Played</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Board Games View -->
+    <div id="boardGamesView" class="container view-hidden">
+        <div class="board-games-header">
+            <h1>🧠 Board & Logic Strengthening Games</h1>
+            <div class="points-display">
+                <span id="bgPointsCount">0</span> Points Available
+            </div>
+            <button onclick="closeBoardGames()" class="btn-secondary">Back to Dashboard</button>
+        </div>
+        <div id="gamesSelectionGrid" class="games-selection-grid">
+            <!-- Games will be populated here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Game Play View -->
+    <div id="gamePlayView" class="container view-hidden">
+        <div class="game-play-header">
+            <h1 id="currentGameTitle">Game</h1>
+            <button onclick="closeGamePlay()" class="btn-secondary">Back to Games</button>
+        </div>
+        <div id="gamePlayArea" class="game-play-area">
+            <!-- Game content will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Grade Content View -->
+    <div id="gradeContentView" class="container view-hidden">
+        <div class="grade-content-header">
+            <h1 id="gradeContentTitle">Grade Content</h1>
+            <button onclick="backToDashboard()" class="btn-secondary">Back to Dashboard</button>
+        </div>
+        <div id="gradeContentBody" class="grade-content-body">
+            <!-- Grade subjects will be populated here -->
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
