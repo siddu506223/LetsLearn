@@ -15,9 +15,27 @@ const quizzes = {
             { id: 7, question: "Which word starts with 'S'?", options: ["Apple", "Dog", "Sun", "Fish"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Sun starts with the letter 'S'. The 'S' makes a hissing sound at the beginning of words like: Sam, sit, sun." },
             { id: 8, question: "What sound does a cat make?", options: ["Woof", "Moo", "Meow", "Quack"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Cats say 'Meow'. This is how cats communicate with humans and other cats." },
             { id: 9, question: "Which animal says 'Quack'?", options: ["Chicken", "Duck", "Frog", "Goose"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Ducks say 'Quack'. You often hear this sound near ponds and lakes where ducks swim." },
-            { id: 10, question: "What letter is at the end of the alphabet?", options: ["X", "Y", "Z", "W"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Z is the last letter of the English alphabet. It ends the sequence: ...X, Y, Z." }
-        ],
-        medium: [
+            { id: 10, question: "What letter is at the end of the alphabet?", options: ["X", "Y", "Z", "W"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Z is the last letter of the English alphabet. It ends the sequence: ...X, Y, Z." },
+            { id: 11, question: "What color is grass?", options: ["Brown", "Green", "Yellow", "Blue"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Grass is green. Most plants and trees are green because of a chemical called chlorophyll." },
+            { id: 12, question: "Which word starts with 'B'?", options: ["Apple", "Ball", "Dog", "Fish"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Ball starts with the letter 'B'. The 'B' makes a soft sound at the beginning like 'bbb'." },
+            { id: 13, question: "What sound does a duck make?", options: ["Moo", "Woof", "Quack", "Baa"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Ducks say 'Quack'. You hear this sound when ducks are near water or in ponds." },
+            { id: 14, question: "Which animal is big and gray?", options: ["Mouse", "Elephant", "Bird", "Fish"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "An elephant is big and gray. Elephants are the largest land animals and live in Africa and Asia." },
+            { id: 15, question: "What color is snow?", options: ["Gray", "Blue", "White", "Black"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Snow is white. It falls from clouds in winter and covers the ground with a white blanket." },
+            { id: 16, question: "Which word starts with 'T'?", options: ["Bird", "House", "Tiger", "Fish"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Tiger starts with the letter 'T'. The 'T' makes a 'tuh' sound at the beginning of words." },
+            { id: 17, question: "What sound does a sheep make?", options: ["Woof", "Baa", "Moo", "Quack"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Sheep say 'Baa' or 'Baa-baa'. Farmers hear this sound from their sheep on the farm." },
+            { id: 18, question: "Which letter comes before 'M'?", options: ["K", "L", "N", "O"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "The letter L comes before M in the alphabet: ...J, K, L, M..." },
+            { id: 19, question: "What color is an apple?", options: ["Yellow", "Green", "Red", "Orange"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Many apples are red, but some are green or yellow. Red apples are a popular color for apples." },
+            { id: 20, question: "Which word starts with 'P'?", options: ["Zebra", "Pig", "Dog", "Cat"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Pig starts with the letter 'P'. The 'P' makes a 'puh' sound like a puff of air." },
+            { id: 21, question: "What sound does a pig make?", options: ["Oink", "Moo", "Baa", "Cluck"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "Pigs say 'Oink' or 'Oink-oink'. This is the sound that helps farmers know where their pigs are." },
+            { id: 22, question: "Which letter comes after 'T'?", options: ["S", "U", "V", "W"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "The letter U comes after T in the alphabet: ...R, S, T, U..." },
+            { id: 23, question: "What color is the sun?", options: ["White", "Yellow", "Orange", "Red"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "The sun appears yellow in the sky. It shines bright and warm, giving us light and heat." },
+            { id: 24, question: "Which word starts with 'H'?", options: ["Dog", "House", "Fish", "Bird"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "House starts with the letter 'H'. The 'H' makes an 'hhh' breathing sound at the beginning." },
+            { id: 25, question: "What sound does a cow make?", options: ["Woof", "Moo", "Baa", "Quack"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Cows say 'Moo'. This is a long, deep sound that you can hear from far away on a farm." },
+            { id: 26, question: "How many letters are in 'dog'?", options: ["1", "2", "3", "4"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "The word 'dog' has 3 letters: d-o-g. Count each letter separately." },
+            { id: 27, question: "Which word starts with 'F'?", options: ["Dog", "Cat", "Fish", "Bird"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Fish starts with the letter 'F'. The 'F' makes a soft 'fff' sound like air coming out." },
+            { id: 28, question: "What color is a banana?", options: ["Red", "Green", "Yellow", "Brown"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "Bananas are yellow. When ripe, they turn from green to yellow. When very ripe, they get brown spots." },
+            { id: 29, question: "Which letter comes after 'B'?", options: ["A", "C", "D", "E"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "The letter C comes after B in the alphabet: ...A, B, C, D..." }
+
             { id: 11, question: "Which word rhymes with 'cat'?", options: ["Dog", "Hat", "Bird", "Fish"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Hat rhymes with cat because they both end with the '-at' sound. Dog ends with '-og', bird with '-ird', and fish with '-ish'." },
             { id: 12, question: "How many letters are in the word 'book'?", options: ["2", "3", "4", "5"], correctAnswer: 2, points: 10, difficulty: "medium", explanation: "The word 'book' has 4 letters: b-o-o-k. Count each letter carefully!" },
             { id: 13, question: "Which sentence is correct?", options: ["the dog run", "The dog runs", "dog the runs", "runs dog the"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Sentences start with a capital letter. The correct word order is subject (dog) then verb (runs). 'The dog runs' is the correct sentence." },
@@ -48,9 +66,27 @@ const quizzes = {
             { id: 32, question: "What is 5 - 2?", options: ["1", "2", "3", "4"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "5 - 2 = 3. If you have 5 toys and take away 2, you have 3 left. Use your fingers to count down." },
             { id: 33, question: "What is 1 + 2?", options: ["1", "2", "3", "4"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "1 + 2 = 3. Start at 1 and add 2 more: 1, 2, 3." },
             { id: 34, question: "How many legs does a dog have?", options: ["2", "3", "4", "5"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "A dog has 4 legs: front-left, front-right, back-left, and back-right." },
-            { id: 35, question: "What is 0 + 5?", options: ["1", "3", "5", "7"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "0 + 5 = 5. When you start with 0 (nothing) and add 5, you get 5." }
-        ],
-        medium: [
+            { id: 35, question: "What is 0 + 5?", options: ["1", "3", "5", "7"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "0 + 5 = 5. When you start with 0 (nothing) and add 5, you get 5." },
+            { id: 36, question: "What is 4 + 1?", options: ["3", "4", "5", "6"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "4 + 1 = 5. If you have 4 things and get 1 more, you have 5 total." },
+            { id: 37, question: "What is 3 + 0?", options: ["0", "2", "3", "4"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "3 + 0 = 3. When you add 0 (nothing), the number stays the same." },
+            { id: 38, question: "What is 6 - 1?", options: ["4", "5", "6", "7"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "6 - 1 = 5. If you have 6 items and remove 1, you have 5 left." },
+            { id: 39, question: "What is 2 + 3?", options: ["4", "5", "6", "7"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "2 + 3 = 5. Start at 2 and count up 3: 2... 3, 4, 5." },
+            { id: 40, question: "How many eyes do you have?", options: ["1", "2", "3", "4"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "You have 2 eyes: one on the left side of your face and one on the right side." },
+            { id: 41, question: "What is 5 + 1?", options: ["4", "5", "6", "7"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "5 + 1 = 6. If you have 5 candies and get 1 more, you have 6 candies." },
+            { id: 42, question: "What is 7 - 1?", options: ["5", "6", "7", "8"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "7 - 1 = 6. Take away 1 from 7 and you're left with 6." },
+            { id: 43, question: "What is 4 + 2?", options: ["5", "6", "7", "8"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "4 + 2 = 6. Start at 4 and count up 2 more: 4... 5, 6." },
+            { id: 44, question: "What is 8 - 1?", options: ["6", "7", "8", "9"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "8 - 1 = 7. Remove 1 from 8 and you get 7." },
+            { id: 45, question: "What is 3 + 2?", options: ["4", "5", "6", "7"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "3 + 2 = 5. Count: 3... 4, 5 (counting up 2 from 3)." },
+            { id: 46, question: "What is 9 - 1?", options: ["7", "8", "9", "10"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "9 - 1 = 8. Take 1 away from 9 and you have 8 left." },
+            { id: 47, question: "What is 5 + 2?", options: ["6", "7", "8", "9"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "5 + 2 = 7. Start at 5 and add 2: 5... 6, 7." },
+            { id: 48, question: "What is 10 - 1?", options: ["8", "9", "10", "11"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "10 - 1 = 9. Remove 1 from 10 and you get 9." },
+            { id: 49, question: "What is 1 + 3?", options: ["2", "3", "4", "5"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "1 + 3 = 4. Start at 1 and count up 3: 1... 2, 3, 4." },
+            { id: 50, question: "What is 6 - 2?", options: ["3", "4", "5", "6"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "6 - 2 = 4. Take away 2 from 6 and you have 4 left." },
+            { id: 51, question: "How many toes do you have?", options: ["5", "8", "10", "12"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "You have 10 toes total: 5 on each foot." },
+            { id: 52, question: "What is 2 + 4?", options: ["5", "6", "7", "8"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "2 + 4 = 6. Start at 2 and count up 4: 2... 3, 4, 5, 6." },
+            { id: 53, question: "What is 7 - 2?", options: ["4", "5", "6", "7"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "7 - 2 = 5. Remove 2 from 7 and you're left with 5." },
+            { id: 54, question: "What is 3 + 4?", options: ["6", "7", "8", "9"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "3 + 4 = 7. Start at 3 and count up 4: 3... 4, 5, 6, 7." }
+
             { id: 36, question: "What is 5 + 3?", options: ["6", "7", "8", "9"], correctAnswer: 2, points: 10, difficulty: "medium", explanation: "5 + 3 = 8. Start at 5 and count up 3 more: 5... 6, 7, 8." },
             { id: 37, question: "What is 10 - 4?", options: ["4", "5", "6", "7"], correctAnswer: 2, points: 10, difficulty: "medium", explanation: "10 - 4 = 6. If you have 10 items and take away 4, you have 6 left." },
             { id: 38, question: "If you have 3 apples and get 2 more, how many do you have?", options: ["3", "4", "5", "6"], correctAnswer: 2, points: 10, difficulty: "medium", explanation: "3 + 2 = 5. You had 3, then got 2 more, so you now have 5 apples total." },
@@ -678,6 +714,58 @@ const quizzes = {
             { id: 407, name: "🎯 Tic-Tac-Toe Advanced", description: "Classic game with strategic depth. Find patterns and defensive positions.", points: 15, difficulty: "easy" }
         ]
     }
+};
+
+// Randomizer function to shuffle questions
+quizzes.getRandomQuestions = function(grade, subject, difficulty, count = 5) {
+    try {
+        const questions = quizzes[grade]?.[subject]?.[difficulty] || [];
+        
+        // Shuffle array using Fisher-Yates algorithm
+        const shuffled = [...questions].sort(() => Math.random() - 0.5);
+        
+        // Return requested count or all if fewer available
+        return shuffled.slice(0, Math.min(count, shuffled.length));
+    } catch (error) {
+        console.error('Error getting random questions:', error);
+        return [];
+    }
+};
+
+// Get all questions from a category
+quizzes.getAllQuestions = function(grade, subject, difficulty) {
+    try {
+        return quizzes[grade]?.[subject]?.[difficulty] || [];
+    } catch (error) {
+        console.error('Error getting questions:', error);
+        return [];
+    }
+};
+
+// Shuffle function for any array
+quizzes.shuffleArray = function(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+};
+
+// Shuffle options within questions while preserving correct answer
+quizzes.shuffleQuestionOptions = function(questions) {
+    return questions.map(q => {
+        const options = [...q.options];
+        const correctAnswer = options[q.correctAnswer];
+        const shuffledOptions = quizzes.shuffleArray(options);
+        const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+        
+        return {
+            ...q,
+            options: shuffledOptions,
+            correctAnswer: newCorrectIndex
+        };
+    });
 };
 
 module.exports = quizzes;
