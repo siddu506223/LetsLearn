@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: letslearn-app
+    name: ce-academy
     env: node
     plan: free
     buildCommand: npm install
