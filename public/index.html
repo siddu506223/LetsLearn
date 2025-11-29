@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lets Learn - Welcome to RS Learning Academy</title>
+    <title>Curious Elephant Academy - Welcome to RS Foundation</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,11 +11,20 @@
     <div id="titleView" class="container view-active">
         <div class="title-screen">
             <div class="title-content">
-                <h1 class="title-main">Lets Learn</h1>
-                <p class="title-subtitle">by RS Learning Academy</p>
+                <div class="elephant-decorator left-elephant">🐘</div>
+                <h1 class="title-main">Curious Elephant Academy</h1>
+                <p class="title-subtitle">by RS Foundation</p>
                 <div class="title-divider"></div>
+                <div class="subject-badges">
+                    <span class="badge-reading">📖 Reading</span>
+                    <span class="badge-math">🔢 Math</span>
+                    <span class="badge-science">🔬 Science</span>
+                    <span class="badge-writing">✏️ Writing</span>
+                    <span class="badge-history">📚 History</span>
+                </div>
                 <p class="title-description">Discover, Learn, and Grow</p>
                 <button onclick="goToLoginScreen()" class="btn-primary btn-large btn-pulse">Next →</button>
+                <div class="elephant-decorator right-elephant">🐘</div>
             </div>
         </div>
     </div>
@@ -24,7 +33,9 @@
     <div id="loginView" class="container view-hidden">
         <div class="login-container">
             <div class="login-box">
-                <h1>Welcome to RS Learning Academy</h1>
+                <div class="login-elephant">🐘</div>
+                <h1>Welcome to Curious Elephant Academy</h1>
+                <p class="login-subtitle">by RS Foundation</p>
                 <div class="login-tabs">
                     <button id="loginTab" class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
                     <button id="signupTab" class="tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
@@ -57,7 +68,13 @@
     <!-- Dashboard View for Kindergarten -->
     <div id="dashboardView" class="container view-hidden">
         <div class="dashboard-header">
-            <h1 id="studentName"></h1>
+            <div class="header-welcome">
+                <div class="header-elephant">🐘</div>
+                <div>
+                    <h1 id="studentName"></h1>
+                    <p class="foundation-text">Curious Elephant Academy - RS Foundation</p>
+                </div>
+            </div>
             <div class="points-display">
                 <span id="pointsCount">0</span> / 30 Points
                 <span id="minigameStatus"></span>
@@ -70,7 +87,8 @@
         </div>
 
         <div class="dashboard-grid">
-            <div class="subject-card">
+            <div class="subject-card reading-card">
+                <div class="card-elephant">🐘</div>
                 <h2>📖 Reading</h2>
                 <div class="difficulty-buttons">
                     <button onclick="startQuiz('reading', 'easy')">Easy</button>
@@ -79,7 +97,8 @@
                 </div>
             </div>
 
-            <div class="subject-card">
+            <div class="subject-card math-card">
+                <div class="card-elephant">🐘</div>
                 <h2>🔢 Math</h2>
                 <div class="difficulty-buttons">
                     <button onclick="startQuiz('math', 'easy')">Easy</button>
@@ -88,12 +107,33 @@
                 </div>
             </div>
 
-            <div class="subject-card">
+            <div class="subject-card science-card">
+                <div class="card-elephant">🐘</div>
+                <h2>🔬 Science</h2>
+                <div class="difficulty-buttons">
+                    <button onclick="startQuiz('science', 'easy')">Easy</button>
+                    <button onclick="startQuiz('science', 'medium')">Medium</button>
+                    <button onclick="startQuiz('science', 'hard')">Advanced</button>
+                </div>
+            </div>
+
+            <div class="subject-card writing-card">
+                <div class="card-elephant">🐘</div>
                 <h2>✏️ Writing</h2>
                 <div class="difficulty-buttons">
                     <button onclick="startQuiz('writing', 'easy')">Easy</button>
                     <button onclick="startQuiz('writing', 'medium')">Medium</button>
                     <button onclick="startQuiz('writing', 'hard')">Advanced</button>
+                </div>
+            </div>
+
+            <div class="subject-card history-card">
+                <div class="card-elephant">🐘</div>
+                <h2>📚 History</h2>
+                <div class="difficulty-buttons">
+                    <button onclick="startQuiz('history', 'easy')">Easy</button>
+                    <button onclick="startQuiz('history', 'medium')">Medium</button>
+                    <button onclick="startQuiz('history', 'hard')">Advanced</button>
                 </div>
             </div>
         </div>

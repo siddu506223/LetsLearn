@@ -1485,4 +1485,197 @@ tr:hover {
     margin-top: 10px;
 }
 
+/* ==================== ELEPHANT THEME STYLES ==================== */
+
+.elephant-decorator {
+    font-size: 4rem;
+    animation: elephantBounce 3s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+.left-elephant {
+    animation-delay: 0s;
+    margin-right: 20px;
+}
+
+.right-elephant {
+    animation-delay: 1s;
+    margin-left: 20px;
+}
+
+@keyframes elephantBounce {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+.title-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.subject-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.subject-badges span {
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    animation: badgeFade 0.6s ease-in;
+}
+
+.badge-reading {
+    background: linear-gradient(135deg, #FFE5B4, #FFD700);
+    color: #333;
+}
+
+.badge-math {
+    background: linear-gradient(135deg, #B4E5FF, #87CEEB);
+    color: #333;
+}
+
+.badge-science {
+    background: linear-gradient(135deg, #C5E5B4, #90EE90);
+    color: #333;
+}
+
+.badge-writing {
+    background: linear-gradient(135deg, #FFB4D6, #FF69B4);
+    color: #333;
+}
+
+.badge-history {
+    background: linear-gradient(135deg, #E5C5B4, #D2691E);
+    color: #333;
+}
+
+@keyframes badgeFade {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.login-elephant {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 15px;
+    animation: elephantBounce 2s ease-in-out infinite;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #667eea;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.header-welcome {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.header-elephant {
+    font-size: 3rem;
+    animation: elephantBounce 3s ease-in-out infinite;
+}
+
+.foundation-text {
+    color: #667eea;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.subject-card {
+    position: relative;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-elephant {
+    font-size: 2.5rem;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    opacity: 0.3;
+    animation: elephantBounce 2.5s ease-in-out infinite;
+}
+
+.reading-card {
+    background: linear-gradient(135deg, #FFE5B4, #FFD700);
+}
+
+.reading-card:hover {
+    border-color: #DAA520;
+    box-shadow: 0 8px 16px rgba(218, 165, 32, 0.3);
+}
+
+.math-card {
+    background: linear-gradient(135deg, #B4E5FF, #87CEEB);
+}
+
+.math-card:hover {
+    border-color: #4682B4;
+    box-shadow: 0 8px 16px rgba(70, 130, 180, 0.3);
+}
+
+.science-card {
+    background: linear-gradient(135deg, #C5E5B4, #90EE90);
+}
+
+.science-card:hover {
+    border-color: #228B22;
+    box-shadow: 0 8px 16px rgba(34, 139, 34, 0.3);
+}
+
+.writing-card {
+    background: linear-gradient(135deg, #FFB4D6, #FF69B4);
+}
+
+.writing-card:hover {
+    border-color: #FF1493;
+    box-shadow: 0 8px 16px rgba(255, 20, 147, 0.3);
+}
+
+.history-card {
+    background: linear-gradient(135deg, #E5C5B4, #D2691E);
+}
+
+.history-card:hover {
+    border-color: #8B4513;
+    box-shadow: 0 8px 16px rgba(139, 69, 19, 0.3);
+}
+
+.subject-card h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.subject-card:hover {
+    transform: translateY(-8px);
+}
+
+
 
