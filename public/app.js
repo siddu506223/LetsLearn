@@ -1,5 +1,6 @@
 // Global State
 let currentUser = null;
+let currentParent = null;
 let currentQuiz = null;
 let currentQuestionIndex = 0;
 let quizQuestions = [];
@@ -7,6 +8,7 @@ let userAnswer = null;
 let minigameCards = [];
 let minigameFlipped = [];
 let minigameMatched = [];
+let userType = 'student'; // 'student' or 'parent'
 
 // Adaptive Difficulty System
 let currentDifficulty = 'easy'; // easy, medium, hard
@@ -15,11 +17,25 @@ let consecutiveIncorrect = 0;
 
 // ==================== TITLE & LOGIN SCREEN ====================
 
-function goToLoginScreen() {
+function goToLoginScreen(type = 'student') {
+    userType = type;
     document.getElementById('titleView').classList.remove('view-active');
     document.getElementById('titleView').classList.add('view-hidden');
     document.getElementById('loginView').classList.remove('view-hidden');
     document.getElementById('loginView').classList.add('view-active');
+    
+    // Show appropriate tabs
+    if (type === 'student') {
+        document.getElementById('studentTabs').style.display = 'flex';
+        document.getElementById('parentTabs').style.display = 'none';
+        document.getElementById('loginTitle').textContent = 'Welcome to Curious Elephant Academy';
+        switchAuthTab('login');
+    } else {
+        document.getElementById('studentTabs').style.display = 'none';
+        document.getElementById('parentTabs').style.display = 'flex';
+        document.getElementById('loginTitle').textContent = 'Parent Dashboard';
+        switchAuthTab('parent-login');
+    }
 }
 
 function backToTitle() {
@@ -30,21 +46,26 @@ function backToTitle() {
 }
 
 function switchAuthTab(tab) {
-    const loginForm = document.getElementById('loginForm');
-    const signupForm = document.getElementById('signupForm');
-    const loginTab = document.getElementById('loginTab');
-    const signupTab = document.getElementById('signupTab');
-    
     if (tab === 'login') {
-        loginForm.classList.add('active-form');
-        signupForm.classList.remove('active-form');
-        loginTab.classList.add('active');
-        signupTab.classList.remove('active');
-    } else {
-        signupForm.classList.add('active-form');
-        loginForm.classList.remove('active-form');
-        signupTab.classList.add('active');
-        loginTab.classList.remove('active');
+        document.getElementById('loginForm').classList.add('active-form');
+        document.getElementById('signupForm').classList.remove('active-form');
+        document.getElementById('loginTab').classList.add('active');
+        document.getElementById('signupTab').classList.remove('active');
+    } else if (tab === 'signup') {
+        document.getElementById('signupForm').classList.add('active-form');
+        document.getElementById('loginForm').classList.remove('active-form');
+        document.getElementById('signupTab').classList.add('active');
+        document.getElementById('loginTab').classList.remove('active');
+    } else if (tab === 'parent-login') {
+        document.getElementById('parentLoginForm').classList.add('active-form');
+        document.getElementById('parentSignupForm').classList.remove('active-form');
+        document.getElementById('parentLoginTab').classList.add('active');
+        document.getElementById('parentSignupTab').classList.remove('active');
+    } else if (tab === 'parent-signup') {
+        document.getElementById('parentSignupForm').classList.add('active-form');
+        document.getElementById('parentLoginForm').classList.remove('active-form');
+        document.getElementById('parentSignupTab').classList.add('active');
+        document.getElementById('parentLoginTab').classList.remove('active');
     }
 }
 
@@ -57,17 +78,20 @@ async function handleLogin() {
         return;
     }
     
-    // For demo, create a user with email as identifier
     try {
-        const response = await fetch('/api/users');
-        const users = await response.json();
-        const user = users.find(u => u.email === email);
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
         
-        if (user) {
-            currentUser = user;
+        const data = await response.json();
+        
+        if (data.success) {
+            currentUser = data.user;
             goToUserDashboard();
         } else {
-            alert('User not found. Please sign up first.');
+            alert(data.error || 'Login failed');
         }
     } catch (error) {
         console.error('Login error:', error);
@@ -77,14 +101,92 @@ async function handleLogin() {
 
 async function handleSignup() {
     const firstName = document.getElementById('signupFirstName').value.trim();
+    const middleName = document.getElementById('signupMiddleName').value.trim();
     const lastName = document.getElementById('signupLastName').value.trim();
     const email = document.getElementById('signupEmail').value.trim();
     const password = document.getElementById('signupPassword').value.trim();
     const confirmPassword = document.getElementById('signupConfirmPassword').value.trim();
-    const grade = 'Kindergarten'; // Default grade
-    const dob = new Date().toISOString().split('T')[0];
+    const grade = document.getElementById('signupGrade').value;
     
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !password || !grade) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ firstName, middleName, lastName, email, password, confirmPassword, grade })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentUser = data.user;
+            showFeedback('Account created successfully!', 'perfect');
+            setTimeout(() => {
+                goToUserDashboard();
+            }, 1000);
+        } else {
+            alert(data.error || 'Signup failed');
+        }
+    } catch (error) {
+        console.error('Signup error:', error);
+        alert('Signup failed');
+    }
+}
+
+// ==================== PARENT AUTHENTICATION ====================
+
+async function handleParentLogin() {
+    const email = document.getElementById('parentLoginEmail').value.trim();
+    const password = document.getElementById('parentLoginPassword').value.trim();
+    
+    if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentParent = data.user;
+            loadParentDashboard(currentParent.email);
+        } else {
+            alert(data.error || 'Login failed');
+        }
+    } catch (error) {
+        console.error('Parent login error:', error);
+        alert('Login failed');
+    }
+}
+
+async function handleParentSignup() {
+    const firstName = document.getElementById('parentFirstName').value.trim();
+    const lastName = document.getElementById('parentLastName').value.trim();
+    const email = document.getElementById('parentSignupEmail').value.trim();
+    const password = document.getElementById('parentSignupPassword').value.trim();
+    const confirmPassword = document.getElementById('parentSignupConfirmPassword').value.trim();
+    
+    if (!firstName || !lastName || !email || !password) {
         alert('Please fill in all fields');
         return;
     }
@@ -100,26 +202,117 @@ async function handleSignup() {
     }
     
     try {
-        const response = await fetch('/api/users', {
+        const response = await fetch('/api/auth/parent-signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firstName, lastName, email, grade, dateOfBirth: dob })
+            body: JSON.stringify({ firstName, lastName, email, password, confirmPassword })
         });
         
-        if (response.ok) {
-            const user = await response.json();
-            currentUser = user;
-            showFeedback('Account created successfully!', 'perfect');
-            setTimeout(() => {
-                goToUserDashboard();
-            }, 1000);
+        const data = await response.json();
+        
+        if (data.success) {
+            currentParent = data.parent;
+            alert('Account created successfully!');
+            loadParentDashboard(currentParent.email);
         } else {
-            alert('Signup failed');
+            alert(data.error || 'Signup failed');
         }
     } catch (error) {
-        console.error('Signup error:', error);
+        console.error('Parent signup error:', error);
         alert('Signup failed');
     }
+}
+
+function loadParentDashboard(parentEmail) {
+    document.getElementById('loginView').classList.remove('view-active');
+    document.getElementById('loginView').classList.add('view-hidden');
+    document.getElementById('parentDashboardView').classList.remove('view-hidden');
+    document.getElementById('parentDashboardView').classList.add('view-active');
+    
+    document.getElementById('parentName').textContent = `${currentParent.firstName} ${currentParent.lastName}`;
+    
+    // Load children data
+    loadChildrenProgress();
+}
+
+async function loadChildrenProgress() {
+    try {
+        const response = await fetch(`/api/parent/${currentParent.email}/children`);
+        const data = await response.json();
+        
+        if (data.success && data.children) {
+            displayChildrenProgress(data.children);
+        } else {
+            document.getElementById('childrenContainer').innerHTML = '<p>No children linked to this account yet.</p>';
+        }
+    } catch (error) {
+        console.error('Error loading children progress:', error);
+    }
+}
+
+function displayChildrenProgress(children) {
+    const container = document.getElementById('childrenContainer');
+    const reportsContainer = document.getElementById('reportsContainer');
+    
+    if (children.length === 0) {
+        container.innerHTML = '<p>No children linked yet. Please link your students to see their progress.</p>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    reportsContainer.innerHTML = '';
+    
+    children.forEach(child => {
+        // Subject progress cards
+        const card = document.createElement('div');
+        card.className = 'subject-card reading-card';
+        card.innerHTML = `
+            <h3>${child.firstName} ${child.lastName} - Grade ${child.grade}</h3>
+            <p>Total Points: <strong>${child.progress ? child.progress.totalPointsEarned : 0}</strong></p>
+            <p>Quizzes Completed: <strong>${child.progress ? child.progress.totalQuizzesCompleted : 0}</strong></p>
+        `;
+        container.appendChild(card);
+        
+        // Weekly report
+        const report = document.createElement('div');
+        report.className = 'child-progress-card';
+        report.innerHTML = `
+            <div class="child-name">${child.firstName} ${child.lastName}</div>
+            <div class="summary-stat">
+                <div class="summary-stat-label">Grade Level</div>
+                <div class="summary-stat-value">${child.grade}</div>
+            </div>
+            <div class="weekly-summary">
+                <div class="summary-stat">
+                    <div class="summary-stat-label">Total Points</div>
+                    <div class="summary-stat-value">${child.progress ? child.progress.totalPointsEarned : 0}</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-stat-label">Quizzes Done</div>
+                    <div class="summary-stat-value">${child.progress ? child.progress.totalQuizzesCompleted : 0}</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-stat-label">Last Updated</div>
+                    <div class="summary-stat-value">${child.progress && child.progress.lastUpdated ? new Date(child.progress.lastUpdated).toLocaleDateString() : 'N/A'}</div>
+                </div>
+            </div>
+            ${child.progress && child.progress.totalQuizzesCompleted < 5 ? `
+                <div class="alert-banner">
+                    <strong>📌 Encouragement Needed!</strong>
+                    Your child has completed ${child.progress.totalQuizzesCompleted} quizzes. Keep the momentum going!
+                </div>
+            ` : ''}
+        `;
+        reportsContainer.appendChild(report);
+    });
+}
+
+function parentLogout() {
+    currentParent = null;
+    document.getElementById('parentDashboardView').classList.remove('view-active');
+    document.getElementById('parentDashboardView').classList.add('view-hidden');
+    document.getElementById('titleView').classList.remove('view-hidden');
+    document.getElementById('titleView').classList.add('view-active');
 }
 
 function goToUserDashboard() {

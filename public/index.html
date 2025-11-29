@@ -23,7 +23,10 @@
                     <span class="badge-history">📚 History</span>
                 </div>
                 <p class="title-description">Discover, Learn, and Grow</p>
-                <button onclick="goToLoginScreen()" class="btn-primary btn-large btn-pulse">Next →</button>
+                <div class="button-group">
+                    <button onclick="goToLoginScreen('student')" class="btn-primary btn-large btn-pulse">👦 Student Login</button>
+                    <button onclick="goToLoginScreen('parent')" class="btn-secondary btn-large">👨‍👩‍👧 Parent Dashboard</button>
+                </div>
                 <div class="elephant-decorator right-elephant">🐘</div>
             </div>
         </div>
@@ -34,14 +37,18 @@
         <div class="login-container">
             <div class="login-box">
                 <div class="login-elephant">🐘</div>
-                <h1>Welcome to Curious Elephant Academy</h1>
+                <h1 id="loginTitle">Welcome to Curious Elephant Academy</h1>
                 <p class="login-subtitle">by RS Foundation</p>
-                <div class="login-tabs">
+                <div id="studentTabs" class="login-tabs">
                     <button id="loginTab" class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
                     <button id="signupTab" class="tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
                 </div>
+                <div id="parentTabs" class="login-tabs" style="display: none;">
+                    <button id="parentLoginTab" class="tab-btn active" onclick="switchAuthTab('parent-login')">Parent Login</button>
+                    <button id="parentSignupTab" class="tab-btn" onclick="switchAuthTab('parent-signup')">Parent Sign Up</button>
+                </div>
                 
-                <!-- Login Form -->
+                <!-- Student Login Form -->
                 <div id="loginForm" class="auth-form active-form">
                     <input type="email" id="loginEmail" placeholder="Email" required>
                     <input type="password" id="loginPassword" placeholder="Password" required>
@@ -51,14 +58,79 @@
                 
                 <!-- Signup Form -->
                 <div id="signupForm" class="auth-form">
-                    <input type="text" id="signupFirstName" placeholder="First Name" required>
+                    <div class="form-row">
+                        <input type="text" id="signupFirstName" placeholder="First Name" required>
+                        <input type="text" id="signupMiddleName" placeholder="Middle Name (Optional)">
+                    </div>
                     <input type="text" id="signupLastName" placeholder="Last Name" required>
+                    <select id="signupGrade" required>
+                        <option value="">Select Your Grade</option>
+                        <option value="K">Kindergarten</option>
+                        <option value="1">1st Grade</option>
+                        <option value="2">2nd Grade</option>
+                        <option value="3">3rd Grade</option>
+                        <option value="4">4th Grade</option>
+                        <option value="5">5th Grade</option>
+                        <option value="6">6th Grade</option>
+                        <option value="7">7th Grade</option>
+                        <option value="8">8th Grade</option>
+                        <option value="9">9th Grade</option>
+                        <option value="10">10th Grade</option>
+                        <option value="11">11th Grade</option>
+                        <option value="12">12th Grade</option>
+                    </select>
                     <input type="email" id="signupEmail" placeholder="Email" required>
                     <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required>
                     <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
                     <button onclick="handleSignup()" class="btn-primary btn-full">Create Account</button>
                     <button onclick="backToTitle()" class="btn-secondary btn-full">Back</button>
                 </div>
+
+                <!-- Parent Login Form -->
+                <div id="parentLoginForm" class="auth-form">
+                    <input type="email" id="parentLoginEmail" placeholder="Email" required>
+                    <input type="password" id="parentLoginPassword" placeholder="Password" required>
+                    <button onclick="handleParentLogin()" class="btn-primary btn-full">Login</button>
+                    <button onclick="backToTitle()" class="btn-secondary btn-full">Back</button>
+                </div>
+
+                <!-- Parent Signup Form -->
+                <div id="parentSignupForm" class="auth-form">
+                    <input type="text" id="parentFirstName" placeholder="First Name" required>
+                    <input type="text" id="parentLastName" placeholder="Last Name" required>
+                    <input type="email" id="parentSignupEmail" placeholder="Email" required>
+                    <input type="password" id="parentSignupPassword" placeholder="Password (min 6 chars)" required>
+                    <input type="password" id="parentSignupConfirmPassword" placeholder="Confirm Password" required>
+                    <button onclick="handleParentSignup()" class="btn-primary btn-full">Create Account</button>
+                    <button onclick="backToTitle()" class="btn-secondary btn-full">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parent Dashboard View -->
+    <div id="parentDashboardView" class="container view-hidden">
+        <div class="dashboard-header">
+            <div class="header-welcome">
+                <div class="header-elephant">🐘</div>
+                <div>
+                    <h1 id="parentName">Parent Dashboard</h1>
+                    <p class="foundation-text">Track Your Child's Learning Progress</p>
+                </div>
+            </div>
+            <div class="dashboard-buttons">
+                <button onclick="parentLogout()" class="btn-secondary">Logout</button>
+            </div>
+        </div>
+
+        <div id="childrenContainer" class="dashboard-grid">
+            <!-- Children will be dynamically loaded here -->
+        </div>
+
+        <div class="parent-report-section">
+            <h2>📊 Weekly Reports & Analytics</h2>
+            <div id="reportsContainer">
+                <!-- Reports will be generated here -->
             </div>
         </div>
     </div>

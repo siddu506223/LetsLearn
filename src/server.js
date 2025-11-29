@@ -1,59 +1,195 @@
 const express = require('express');
 const path = require('path');
-const InMemoryDB = require('./database');
+const db = require('./database-persistent'); // Using persistent file-based database
 const quizzes = require('./quizzes');
 
 const app = express();
-const db = new InMemoryDB();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
-// API Routes
+// ==================== AUTHENTICATION ROUTES ====================
 
-// GET all users
+// POST: User Login
+app.post('/api/auth/login', (req, res) => {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+        return res.status(400).json({ success: false, error: 'Email and password required' });
+    }
+    
+    const user = db.selectUserByEmail(email);
+    
+    if (!user) {
+        return res.status(401).json({ success: false, error: 'User not found' });
+    }
+    
+    // Simple password check (in production, use bcrypt)
+    if (user.password !== password) {
+        return res.status(401).json({ success: false, error: 'Invalid password' });
+    }
+    
+    // Update last login
+    db.updateUser(user.id, { lastLogin: new Date().toISOString() });
+    
+    res.json({ success: true, user: user });
+});
+
+// POST: User Signup
+app.post('/api/auth/signup', (req, res) => {
+    const { firstName, lastName, middleName, email, password, confirmPassword, grade, parentEmail } = req.body;
+    
+    if (!firstName || !lastName || !email || !password || !grade) {
+        return res.status(400).json({ success: false, error: 'All required fields must be filled' });
+    }
+    
+    if (password !== confirmPassword) {
+        return res.status(400).json({ success: false, error: 'Passwords do not match' });
+    }
+    
+    if (password.length < 6) {
+        return res.status(400).json({ success: false, error: 'Password must be at least 6 characters' });
+    }
+    
+    const result = db.insertUser({
+        firstName,
+        lastName,
+        middleName,
+        email,
+        password,
+        grade,
+        parentEmail,
+        role: 'student'
+    });
+    
+    if (!result.success) {
+        return res.status(400).json({ success: false, error: result.error });
+    }
+    
+    res.status(201).json({ success: true, user: result.user });
+});
+
+// POST: Parent Signup
+app.post('/api/auth/parent-signup', (req, res) => {
+    const { firstName, lastName, email, password, confirmPassword } = req.body;
+    
+    if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({ success: false, error: 'All fields required' });
+    }
+    
+    if (password !== confirmPassword) {
+        return res.status(400).json({ success: false, error: 'Passwords do not match' });
+    }
+    
+    const result = db.addParent({ firstName, lastName, email, password });
+    
+    if (!result.success) {
+        return res.status(400).json({ success: false, error: result.error });
+    }
+    
+    res.status(201).json({ success: true, parent: result.parent });
+});
+
+// ==================== PROGRESS ROUTES ====================
+
+// POST: Update quiz progress
+app.post('/api/progress/update', (req, res) => {
+    const { userId, subject, difficulty, pointsEarned, correctAnswers, totalQuestions } = req.body;
+    
+    if (!userId || !subject || !difficulty) {
+        return res.status(400).json({ success: false, error: 'Missing required fields' });
+    }
+    
+    const result = db.updateProgress(userId, subject, difficulty, pointsEarned || 0, correctAnswers || 0, totalQuestions || 0);
+    
+    res.json(result);
+});
+
+// GET: User progress
+app.get('/api/progress/:userId', (req, res) => {
+    const { userId } = req.params;
+    
+    const progress = db.getProgress(parseInt(userId));
+    
+    if (!progress) {
+        return res.status(404).json({ success: false, error: 'Progress not found' });
+    }
+    
+    res.json({ success: true, progress: progress });
+});
+
+// ==================== PARENT DASHBOARD ROUTES ====================
+
+// GET: Parent's children progress
+app.get('/api/parent/:parentEmail/children', (req, res) => {
+    const { parentEmail } = req.params;
+    
+    const parent = db.getParentByEmail(parentEmail);
+    
+    if (!parent) {
+        return res.status(404).json({ success: false, error: 'Parent not found' });
+    }
+    
+    const children = parent.childrenIds.map(childId => {
+        const child = db.selectUserById(childId);
+        const progress = db.getProgress(childId);
+        return { ...child, progress };
+    });
+    
+    res.json({ success: true, children });
+});
+
+// ==================== USER ROUTES ====================
 app.get('/api/users', (req, res) => {
-    const users = db.select('users');
+    const users = db.selectAllUsers();
     res.json(users);
 });
 
-// POST: Add new user
-app.post('/api/users', (req, res) => {
-    const { firstName, lastName, email, grade, dateOfBirth } = req.body;
+// GET user by ID
+app.get('/api/users/:id', (req, res) => {
+    const { id } = req.params;
+    const user = db.selectUserById(parseInt(id));
     
-    if (!firstName || !lastName || !email || !grade || !dateOfBirth) {
-        return res.status(400).json({ error: 'All fields are required' });
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
     }
     
-    const user = db.insert('users', { firstName, lastName, email, grade, dateOfBirth });
+    res.json(user);
+});
+
+// PUT: Update user
+app.put('/api/users/:id', (req, res) => {
+    const { id } = req.params;
+    const result = db.updateUser(parseInt(id), req.body);
     
-    // Initialize progress for all students
-    db.initializeUserProgress(user.id);
+    if (!result.success) {
+        return res.status(404).json({ error: result.error });
+    }
     
-    res.status(201).json(user);
+    res.json(result.user);
 });
 
 // DELETE user by ID
 app.delete('/api/users/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const success = db.delete('users', id);
+    const { id } = req.params;
+    const result = db.deleteUser(parseInt(id));
     
-    if (success) {
-        res.json({ message: 'User deleted' });
-    } else {
-        res.status(404).json({ error: 'User not found' });
+    if (!result.success) {
+        return res.status(404).json({ error: result.error });
     }
+    
+    res.json({ message: 'User deleted' });
 });
 
-// DELETE all users
-app.delete('/api/users/clear-all', (req, res) => {
-    db.deleteAll('users');
-    res.json({ message: 'All users deleted' });
+// GET Database Stats
+app.get('/api/stats', (req, res) => {
+    const stats = db.getStats();
+    res.json(stats);
 });
 
-// QUIZ API Routes
+// ==================== QUIZ API ROUTES ====================
 
 // GET all quizzes for a subject and difficulty based on grade
 app.get('/api/quizzes/:grade/:subject/:difficulty', (req, res) => {
