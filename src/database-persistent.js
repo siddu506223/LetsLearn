@@ -302,6 +302,53 @@ const db = {
             console.error('Error getting stats:', error);
             return {};
         }
+    },
+
+    getAllUsers: function() {
+        try {
+            const users = readJSON(usersFile) || [];
+            return users;
+        } catch (error) {
+            console.error('Error getting all users:', error);
+            return [];
+        }
+    },
+
+    getLeaderboard: function(limit = 50) {
+        try {
+            const users = readJSON(usersFile) || [];
+            const progress = readJSON(progressFile) || {};
+            
+            // Build leaderboard data
+            const leaderboardData = users
+                .filter(u => u.role === 'student')  // Only students
+                .map(user => {
+                    const userProgress = progress[user.id] || {};
+                    return {
+                        userId: user.id,
+                        userName: `${user.firstName} ${user.lastName}`,
+                        grade: user.grade,
+                        points: userProgress.totalPointsEarned || 0,
+                        totalGamesPlayed: userProgress.totalQuizzesCompleted || 0,
+                        email: user.email,
+                        createdAt: user.createdAt
+                    };
+                })
+                // Sort by points (descending), then by games played (descending)
+                .sort((a, b) => {
+                    if (b.points !== a.points) {
+                        return b.points - a.points;
+                    }
+                    return b.totalGamesPlayed - a.totalGamesPlayed;
+                })
+                // Limit results
+                .slice(0, limit);
+            
+            return leaderboardData;
+        } catch (error) {
+            console.error('Error getting leaderboard:', error);
+            return [];
+        }
     }
 };
 

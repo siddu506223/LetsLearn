@@ -154,6 +154,7 @@
             <div class="dashboard-buttons">
                 <button onclick="viewLeaderboard()" class="btn-info">🏆 Leaderboard</button>
                 <button onclick="openShop()" class="btn-warning">🛍️ Game Shop</button>
+                <button onclick="toggleAdminPanel()" class="btn-secondary">⚙️ Admin</button>
                 <button onclick="logout()" class="btn-secondary">Logout</button>
             </div>
         </div>
@@ -269,7 +270,11 @@
     <!-- Quiz View -->
     <div id="quizView" class="container view-hidden">
         <div class="quiz-header">
-            <h2 id="quizTitle"></h2>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div style="font-size: 24px;">🐘</div>
+                <h2 id="quizTitle" style="flex: 1; text-align: center;"></h2>
+                <div style="font-size: 24px;">🎯</div>
+            </div>
             <div class="quiz-info">
                 <span id="questionNumber"></span>
                 <span id="userPointsQuiz">Points: 0</span>
@@ -372,6 +377,50 @@
         </div>
         <div id="gradeContentBody" class="grade-content-body">
             <!-- Grade subjects will be populated here -->
+        </div>
+    </div>
+
+    <!-- Admin Panel View -->
+    <div id="adminPanelView" class="container view-hidden">
+        <div class="admin-panel" style="max-height: 90vh; overflow-y: auto;">
+            <h2>⚙️ Admin Panel (This Device Only)</h2>
+            <p style="color: #666; font-size: 12px;">Only visible on this device. Use with caution.</p>
+            
+            <div class="admin-section">
+                <h3>👥 Registered Users</h3>
+                <button onclick="loadAdminUsers()" class="btn-info" style="padding: 8px 15px; margin-bottom: 10px;">🔄 Refresh Users</button>
+                <div id="adminUsersList" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                        <thead>
+                            <tr style="background-color: #f0f0f0; border-bottom: 2px solid #ddd;">
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">ID</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">First Name</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Email</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Grade</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h3>🗑️ Delete User</h3>
+                <div class="admin-form">
+                    <input type="number" id="userIdToDelete" placeholder="Enter User ID" style="padding: 8px; width: 200px; margin: 5px;">
+                    <button onclick="deleteUserAdmin()" class="btn-danger" style="padding: 8px 15px; background-color: #e74c3c; color: white; border: none; cursor: pointer; margin: 5px;">🗑️ Delete User</button>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h3>👤 Your User ID</h3>
+                <p id="adminUserId" style="font-weight: bold; padding: 10px; background: #f0f0f0; border-radius: 5px;"></p>
+            </div>
+
+            <button onclick="closeAdminPanel()" class="btn-secondary" style="margin-top: 20px;">Close Admin Panel</button>
         </div>
     </div>
 

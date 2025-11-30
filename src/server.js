@@ -111,13 +111,13 @@ app.post('/api/progress/update', (req, res) => {
 app.get('/api/progress/:userId', (req, res) => {
     const { userId } = req.params;
     
-    const progress = db.getProgress(parseInt(userId));
+    const progress = db.getUserProgress(parseInt(userId));
     
     if (!progress) {
         return res.status(404).json({ success: false, error: 'Progress not found' });
     }
     
-    res.json({ success: true, progress: progress });
+    res.json(progress);
 });
 
 // ==================== PARENT DASHBOARD ROUTES ====================
@@ -200,36 +200,53 @@ app.get('/api/quizzes/:grade/:subject/:difficulty', (req, res) => {
     if (gradeKey === 'kindergarten' || gradeKey === 'k') {
         gradeKey = 'kindergarten';
     } else if (gradeKey === '1st grade' || gradeKey === '1') {
-        gradeKey = '1st grade';
+        gradeKey = 'grade1';
     } else if (gradeKey === '2nd grade' || gradeKey === '2') {
-        gradeKey = '2nd grade';
+        gradeKey = 'grade2';
     } else if (gradeKey === '3rd grade' || gradeKey === '3') {
-        gradeKey = '3rd grade';
+        gradeKey = 'grade3';
     } else if (gradeKey === '4th grade' || gradeKey === '4') {
-        gradeKey = '4th grade';
+        gradeKey = 'grade4';
     } else if (gradeKey === '5th grade' || gradeKey === '5') {
-        gradeKey = '5th grade';
+        gradeKey = 'grade5';
     } else if (gradeKey === '6th grade' || gradeKey === '6') {
-        gradeKey = '6th grade';
+        gradeKey = 'grade6';
     } else if (gradeKey === '7th grade' || gradeKey === '7') {
-        gradeKey = '7th grade';
+        gradeKey = 'grade7';
     } else if (gradeKey === '8th grade' || gradeKey === '8') {
-        gradeKey = '8th grade';
+        gradeKey = 'grade8';
     } else if (gradeKey === '9th grade' || gradeKey === '9') {
-        gradeKey = '9th grade';
+        gradeKey = 'grade9';
     } else if (gradeKey === '10th grade' || gradeKey === '10') {
-        gradeKey = '10th grade';
+        gradeKey = 'grade10';
     } else if (gradeKey === '11th grade' || gradeKey === '11') {
-        gradeKey = '11th grade';
+        gradeKey = 'grade11';
     } else if (gradeKey === '12th grade' || gradeKey === '12') {
-        gradeKey = '12th grade';
+        gradeKey = 'grade12';
     }
     
-    if (!quizzes[gradeKey] || !quizzes[gradeKey][subject] || !quizzes[gradeKey][subject][difficulty]) {
-        return res.status(404).json({ error: 'Quiz not found' });
+    // Normalize subject name to match quiz structure
+    let normalizedSubject = subject.toLowerCase();
+    const gradeData = quizzes[gradeKey];
+    
+    if (!gradeData) {
+        return res.status(404).json({ error: 'Grade not found' });
     }
     
-    res.json(quizzes[gradeKey][subject][difficulty]);
+    // Find the correct subject key (may have underscores or different casing)
+    let subjectData = null;
+    for (const key in gradeData) {
+        if (key.toLowerCase() === normalizedSubject || key.replace(/_/g, '').toLowerCase() === normalizedSubject.replace(/_/g, '')) {
+            subjectData = gradeData[key];
+            break;
+        }
+    }
+    
+    if (!subjectData || !subjectData[difficulty]) {
+        return res.status(404).json({ error: 'Subject or difficulty not found' });
+    }
+    
+    res.json(subjectData[difficulty]);
 });
 
 // GET learning documents for a grade and subject
@@ -445,22 +462,65 @@ app.post('/api/quizzes/submit/:userId', (req, res) => {
     res.json({
         isCorrect,
         points,
-        userPoints: progress ? progress.points : 0,
+        userPoints: progress ? progress.totalPointsEarned : 0,
         minigameUnlocked,
         correctAnswer: question.correctAnswer
     });
 });
 
-// GET user progress
-app.get('/api/progress/:userId', (req, res) => {
-    const { userId } = req.params;
-    const progress = db.getUserProgress(parseInt(userId));
+// ==================== ADMIN ROUTES ====================
+
+// DELETE: Delete a user (admin only - checks device identifier)
+app.post('/api/admin/delete-user', (req, res) => {
+    const { userId, deviceId } = req.body;
     
-    if (!progress) {
-        return res.status(404).json({ error: 'Progress not found' });
+    // Security: Only allow from localhost or specific device ID
+    const clientIp = req.ip;
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
+    
+    if (!isLocalhost) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
     }
     
-    res.json(progress);
+    if (!userId) {
+        return res.status(400).json({ success: false, error: 'User ID required' });
+    }
+    
+    const result = db.deleteUser(parseInt(userId));
+    
+    if (result) {
+        res.json({ success: true, message: 'User deleted successfully' });
+    } else {
+        res.status(404).json({ success: false, error: 'User not found' });
+    }
+});
+
+// GET: Get all users for admin panel
+app.get('/api/admin/users', (req, res) => {
+    // Security: Only allow from localhost
+    const clientIp = req.ip;
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
+    
+    if (!isLocalhost) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    const users = db.getAllUsers();
+    
+    if (users && Array.isArray(users)) {
+        // Return only necessary info for admin display
+        const userList = users.map(user => ({
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            grade: user.grade,
+            createdAt: user.createdAt
+        }));
+        res.json({ success: true, users: userList });
+    } else {
+        res.json({ success: true, users: [] });
+    }
 });
 
 // LEADERBOARD API Routes

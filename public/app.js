@@ -358,6 +358,123 @@ function showFeedback(message, type = 'default') {
     }, 2000);
 }
 
+// ==================== ADMIN FUNCTIONS ====================
+
+function toggleAdminPanel() {
+    const adminPanel = document.getElementById('adminPanelView');
+    const dashboard = document.getElementById('dashboardView');
+    
+    if (adminPanel.classList.contains('view-hidden')) {
+        // Show admin panel
+        adminPanel.classList.remove('view-hidden');
+        adminPanel.classList.add('view-active');
+        dashboard.classList.add('view-hidden');
+        
+        // Display current user ID
+        document.getElementById('adminUserId').textContent = `Current User ID: ${currentUser.id}`;
+        
+        // Load users list
+        loadAdminUsers();
+    }
+}
+
+function closeAdminPanel() {
+    const adminPanel = document.getElementById('adminPanelView');
+    const dashboard = document.getElementById('dashboardView');
+    
+    adminPanel.classList.remove('view-active');
+    adminPanel.classList.add('view-hidden');
+    dashboard.classList.remove('view-hidden');
+    dashboard.classList.add('view-active');
+}
+
+async function deleteUserAdmin() {
+    const userId = document.getElementById('userIdToDelete').value;
+    
+    if (!userId) {
+        alert('Please enter a User ID');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to delete user ${userId}? This cannot be undone!`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/admin/delete-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                userId: parseInt(userId),
+                deviceId: 'admin_device_123'  // Device identifier for security
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(`User ${userId} has been deleted successfully`);
+            document.getElementById('userIdToDelete').value = '';
+            loadAdminUsers();  // Refresh the user list
+        } else {
+            alert(data.error || 'Failed to delete user');
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Error deleting user');
+    }
+}
+
+async function loadAdminUsers() {
+    try {
+        const response = await fetch('/api/admin/users');
+        const data = await response.json();
+        
+        if (data.success && data.users) {
+            displayAdminUsers(data.users);
+        } else {
+            document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No users found</td></tr>';
+        }
+    } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: red;">Error loading users</td></tr>';
+    }
+}
+
+function displayAdminUsers(users) {
+    const tableBody = document.getElementById('usersTableBody');
+    
+    if (!users || users.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No users registered yet</td></tr>';
+        return;
+    }
+    
+    let html = '';
+    users.forEach(user => {
+        html += `
+            <tr style="border-bottom: 1px solid #ddd; hover: background-color: #f9f9f9;">
+                <td style="padding: 10px; border: 1px solid #ddd;">${user.id}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${user.firstName} ${user.lastName || ''}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${user.email}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${user.grade || 'N/A'}</td>
+                <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                    <button onclick="deleteUserFromList(${user.id})" style="padding: 5px 10px; background-color: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer;">Delete</button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    tableBody.innerHTML = html;
+}
+
+function deleteUserFromList(userId) {
+    if (!confirm(`Are you sure you want to delete user ${userId}? This cannot be undone!`)) {
+        return;
+    }
+    document.getElementById('userIdToDelete').value = userId;
+    deleteUserAdmin();
+}
+
 // ==================== USER MANAGEMENT ====================
 
 // Fetch all users and display them
@@ -514,17 +631,18 @@ async function loadUserProgress(userId) {
 
 function updateProgressDisplay(progress) {
     const pointsElement = document.getElementById('pointsCount');
-    pointsElement.textContent = progress.points;
+    const totalPoints = progress.totalPointsEarned || 0;
+    pointsElement.textContent = totalPoints;
     
     const minigameStatus = document.getElementById('minigameStatus');
     const minigameCard = document.getElementById('minigameCard');
     
-    if (progress.points >= 30) {
+    if (totalPoints >= 30) {
         minigameStatus.textContent = '✓ Unlocked!';
         minigameStatus.style.color = '#27ae60';
         minigameCard.style.display = 'block';
     } else {
-        minigameStatus.textContent = `${30 - progress.points} more points needed`;
+        minigameStatus.textContent = `${30 - totalPoints} more points needed`;
         minigameStatus.style.color = '#e74c3c';
         minigameCard.style.display = 'none';
     }
