@@ -386,7 +386,14 @@
             <h2>⚙️ Admin Panel (This Device Only)</h2>
             <p style="color: #666; font-size: 12px;">Only visible on this device. Use with caution.</p>
             
-            <div class="admin-section">
+            <!-- Tab Navigation -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ddd; flex-wrap: wrap;">
+                <button onclick="switchAdminTab('users')" id="tabUsers" class="btn-info" style="padding: 8px 15px; background-color: #3498db; color: white; border: none; cursor: pointer; border-radius: 0;">👥 Users</button>
+                <button onclick="switchAdminTab('parents')" id="tabParents" class="btn-info" style="padding: 8px 15px; background-color: #95a5a6; color: white; border: none; cursor: pointer; border-radius: 0;">👨‍👩‍👧 Parents</button>
+            </div>
+
+            <!-- Users Section -->
+            <div id="usersAdminSection" class="admin-section" style="display: block;">
                 <h3>👥 Registered Users</h3>
                 <button onclick="loadAdminUsers()" class="btn-info" style="padding: 8px 15px; margin-bottom: 10px;">🔄 Refresh Users</button>
                 <div id="adminUsersList" style="overflow-x: auto;">
@@ -407,11 +414,25 @@
                 </div>
             </div>
 
-            <div class="admin-section">
-                <h3>🗑️ Delete User</h3>
-                <div class="admin-form">
-                    <input type="number" id="userIdToDelete" placeholder="Enter User ID" style="padding: 8px; width: 200px; margin: 5px;">
-                    <button onclick="deleteUserAdmin()" class="btn-danger" style="padding: 8px 15px; background-color: #e74c3c; color: white; border: none; cursor: pointer; margin: 5px;">🗑️ Delete User</button>
+            <!-- Parents Section -->
+            <div id="parentsAdminSection" class="admin-section" style="display: none;">
+                <h3>👨‍👩‍👧 Registered Parents</h3>
+                <button onclick="loadAdminParents()" class="btn-info" style="padding: 8px 15px; margin-bottom: 10px;">🔄 Refresh Parents</button>
+                <div id="adminParentsList" style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                        <thead>
+                            <tr style="background-color: #f0f0f0; border-bottom: 2px solid #ddd;">
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">ID</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">First Name</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Email</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Grade</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parentsTableBody">
+                            <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading parents...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -424,6 +445,57 @@
         </div>
     </div>
 
+    <!-- Edit User Grade Modal -->
+    <div id="editUserModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; flex-direction: column;">
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 400px; width: 90%;">
+            <h3>✏️ Edit User Grade</h3>
+            <p id="editUserName" style="font-weight: bold; margin: 10px 0;"></p>
+            <label style="display: block; margin: 15px 0;">
+                New Grade:
+                <select id="editUserGradeSelect" style="padding: 8px; width: 100%; margin-top: 5px;">
+                    <option value="">Select Grade</option>
+                    <option value="Kindergarten">Kindergarten</option>
+                    <option value="1st grade">1st grade</option>
+                    <option value="2nd grade">2nd grade</option>
+                    <option value="3rd grade">3rd grade</option>
+                    <option value="4th grade">4th grade</option>
+                    <option value="5th grade">5th grade</option>
+                    <option value="6th grade">6th grade</option>
+                </select>
+            </label>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="saveUserGradeEdit()" class="btn-success" style="flex: 1; padding: 10px;">Save</button>
+                <button onclick="closeEditUserModal()" class="btn-secondary" style="flex: 1; padding: 10px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Parent Grade Modal -->
+    <div id="editParentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; flex-direction: column;">
+        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 400px; width: 90%;">
+            <h3>✏️ Edit Parent Grade</h3>
+            <p id="editParentName" style="font-weight: bold; margin: 10px 0;"></p>
+            <label style="display: block; margin: 15px 0;">
+                New Grade:
+                <select id="editParentGradeSelect" style="padding: 8px; width: 100%; margin-top: 5px;">
+                    <option value="">Select Grade</option>
+                    <option value="Kindergarten">Kindergarten</option>
+                    <option value="1st grade">1st grade</option>
+                    <option value="2nd grade">2nd grade</option>
+                    <option value="3rd grade">3rd grade</option>
+                    <option value="4th grade">4th grade</option>
+                    <option value="5th grade">5th grade</option>
+                    <option value="6th grade">6th grade</option>
+                </select>
+            </label>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="saveParentGradeEdit()" class="btn-success" style="flex: 1; padding: 10px;">Save</button>
+                <button onclick="closeEditParentModal()" class="btn-secondary" style="flex: 1; padding: 10px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
+

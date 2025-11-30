@@ -458,6 +458,7 @@ function displayAdminUsers(users) {
                 <td style="padding: 10px; border: 1px solid #ddd;">${user.email}</td>
                 <td style="padding: 10px; border: 1px solid #ddd;">${user.grade || 'N/A'}</td>
                 <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                    <button onclick="openEditUserModal(${user.id}, '${user.firstName} ${user.lastName || ''}', '${user.grade || ''}')" style="padding: 5px 10px; background-color: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">Edit</button>
                     <button onclick="deleteUserFromList(${user.id})" style="padding: 5px 10px; background-color: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer;">Delete</button>
                 </td>
             </tr>
@@ -473,6 +474,162 @@ function deleteUserFromList(userId) {
     }
     document.getElementById('userIdToDelete').value = userId;
     deleteUserAdmin();
+}
+
+// Switch admin tabs (Users vs Parents)
+function switchAdminTab(tab) {
+    if (tab === 'users') {
+        document.getElementById('usersAdminSection').style.display = 'block';
+        document.getElementById('parentsAdminSection').style.display = 'none';
+        document.getElementById('tabUsers').style.backgroundColor = '#3498db';
+        document.getElementById('tabParents').style.backgroundColor = '#95a5a6';
+        loadAdminUsers();
+    } else if (tab === 'parents') {
+        document.getElementById('usersAdminSection').style.display = 'none';
+        document.getElementById('parentsAdminSection').style.display = 'block';
+        document.getElementById('tabUsers').style.backgroundColor = '#95a5a6';
+        document.getElementById('tabParents').style.backgroundColor = '#3498db';
+        loadAdminParents();
+    }
+}
+
+// Load and display all parents
+async function loadAdminParents() {
+    try {
+        const response = await fetch('/api/admin/parents');
+        const data = await response.json();
+        
+        if (data.success && data.parents) {
+            displayAdminParents(data.parents);
+        } else {
+            document.getElementById('parentsTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No parents found</td></tr>';
+        }
+    } catch (error) {
+        console.error('Error loading parents:', error);
+        document.getElementById('parentsTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: red;">Error loading parents</td></tr>';
+    }
+}
+
+function displayAdminParents(parents) {
+    const tableBody = document.getElementById('parentsTableBody');
+    
+    if (!parents || parents.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No parents registered yet</td></tr>';
+        return;
+    }
+    
+    let html = '';
+    parents.forEach(parent => {
+        html += `
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 10px; border: 1px solid #ddd;">${parent.id}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${parent.firstName} ${parent.lastName || ''}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${parent.email}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${parent.grade || 'N/A'}</td>
+                <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                    <button onclick="openEditParentModal(${parent.id}, '${parent.firstName} ${parent.lastName || ''}', '${parent.grade || ''}')" style="padding: 5px 10px; background-color: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">Edit</button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    tableBody.innerHTML = html;
+}
+
+// Open edit user grade modal
+function openEditUserModal(userId, userName, currentGrade) {
+    const modal = document.getElementById('editUserModal');
+    document.getElementById('editUserName').textContent = `User: ${userName}`;
+    document.getElementById('editUserGradeSelect').value = currentGrade;
+    
+    // Store userId for save operation
+    modal.dataset.userId = userId;
+    
+    modal.style.display = 'flex';
+}
+
+function closeEditUserModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+}
+
+// Save user grade changes
+async function saveUserGradeEdit() {
+    const userId = parseInt(document.getElementById('editUserModal').dataset.userId);
+    const newGrade = document.getElementById('editUserGradeSelect').value;
+    
+    if (!newGrade) {
+        alert('Please select a grade');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/admin/edit-user-grade', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, grade: newGrade })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('User grade updated successfully!');
+            closeEditUserModal();
+            loadAdminUsers();  // Refresh the list
+        } else {
+            alert(data.error || 'Failed to update user grade');
+        }
+    } catch (error) {
+        console.error('Error updating user grade:', error);
+        alert('Error updating user grade');
+    }
+}
+
+// Open edit parent grade modal
+function openEditParentModal(parentId, parentName, currentGrade) {
+    const modal = document.getElementById('editParentModal');
+    document.getElementById('editParentName').textContent = `Parent: ${parentName}`;
+    document.getElementById('editParentGradeSelect').value = currentGrade;
+    
+    // Store parentId for save operation
+    modal.dataset.parentId = parentId;
+    
+    modal.style.display = 'flex';
+}
+
+function closeEditParentModal() {
+    document.getElementById('editParentModal').style.display = 'none';
+}
+
+// Save parent grade changes
+async function saveParentGradeEdit() {
+    const parentId = parseInt(document.getElementById('editParentModal').dataset.parentId);
+    const newGrade = document.getElementById('editParentGradeSelect').value;
+    
+    if (!newGrade) {
+        alert('Please select a grade');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/admin/edit-parent-grade', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ parentId, grade: newGrade })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Parent grade updated successfully!');
+            closeEditParentModal();
+            loadAdminParents();  // Refresh the list
+        } else {
+            alert(data.error || 'Failed to update parent grade');
+        }
+    } catch (error) {
+        console.error('Error updating parent grade:', error);
+        alert('Error updating parent grade');
+    }
 }
 
 // ==================== USER MANAGEMENT ====================

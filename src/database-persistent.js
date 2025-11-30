@@ -349,6 +349,56 @@ const db = {
             console.error('Error getting leaderboard:', error);
             return [];
         }
+    },
+
+    // Update user by ID with new values
+    updateUserGrade: function(userId, grade) {
+        try {
+            const users = this.selectAll('users');
+            const userIndex = users.findIndex(u => u.id === userId);
+            
+            if (userIndex === -1) {
+                return { success: false, message: 'User not found' };
+            }
+            
+            users[userIndex].grade = grade;
+            this.writeFile(USERS_FILE, users);
+            
+            return { success: true, user: users[userIndex] };
+        } catch (error) {
+            console.error('Error updating user grade:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Update parent by ID with new values
+    updateParentGrade: function(parentId, grade) {
+        try {
+            const parents = this.selectAll('parents');
+            const parentIndex = parents.findIndex(p => p.id === parentId);
+            
+            if (parentIndex === -1) {
+                return { success: false, message: 'Parent not found' };
+            }
+            
+            parents[parentIndex].grade = grade;
+            this.writeFile(PARENTS_FILE, parents);
+            
+            return { success: true, parent: parents[parentIndex] };
+        } catch (error) {
+            console.error('Error updating parent grade:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Get all parents
+    getAllParents: function() {
+        try {
+            return this.selectAll('parents');
+        } catch (error) {
+            console.error('Error getting all parents:', error);
+            return [];
+        }
     }
 };
 

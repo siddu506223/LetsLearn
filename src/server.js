@@ -523,6 +523,84 @@ app.get('/api/admin/users', (req, res) => {
     }
 });
 
+// POST: Edit user grade
+app.post('/api/admin/edit-user-grade', (req, res) => {
+    // Security: Only allow from localhost
+    const clientIp = req.ip;
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
+    
+    if (!isLocalhost) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    const { userId, grade } = req.body;
+    
+    if (!userId || !grade) {
+        return res.status(400).json({ success: false, error: 'User ID and grade required' });
+    }
+    
+    const result = db.updateUserGrade(parseInt(userId), grade);
+    
+    if (result.success) {
+        res.json({ success: true, user: result.user });
+    } else {
+        res.status(404).json({ success: false, error: result.message || result.error });
+    }
+});
+
+// GET: Get all parents for admin panel
+app.get('/api/admin/parents', (req, res) => {
+    // Security: Only allow from localhost
+    const clientIp = req.ip;
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
+    
+    if (!isLocalhost) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    const parents = db.getAllParents();
+    
+    if (parents && Array.isArray(parents)) {
+        // Return only necessary info for admin display
+        const parentList = parents.map(parent => ({
+            id: parent.id,
+            firstName: parent.firstName,
+            lastName: parent.lastName,
+            email: parent.email,
+            grade: parent.grade,
+            createdAt: parent.createdAt
+        }));
+        res.json({ success: true, parents: parentList });
+    } else {
+        res.json({ success: true, parents: [] });
+    }
+});
+
+// POST: Edit parent grade
+app.post('/api/admin/edit-parent-grade', (req, res) => {
+    // Security: Only allow from localhost
+    const clientIp = req.ip;
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
+    
+    if (!isLocalhost) {
+        return res.status(403).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    const { parentId, grade } = req.body;
+    
+    if (!parentId || !grade) {
+        return res.status(400).json({ success: false, error: 'Parent ID and grade required' });
+    }
+    
+    const result = db.updateParentGrade(parseInt(parentId), grade);
+    
+    if (result.success) {
+        res.json({ success: true, parent: result.parent });
+    } else {
+        res.status(404).json({ success: false, error: result.message || result.error });
+    }
+});
+
 // LEADERBOARD API Routes
 
 // GET global leaderboard
@@ -540,3 +618,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
