@@ -321,6 +321,13 @@ function goToUserDashboard() {
     document.getElementById('dashboardView').classList.remove('view-hidden');
     document.getElementById('dashboardView').classList.add('view-active');
     loadUserProgress(currentUser.id);
+    
+    // Show admin button only for admin user
+    if (currentUser.email === 'siddu.506223@gmail.com') {
+        document.getElementById('adminButton').style.display = 'inline-block';
+    } else {
+        document.getElementById('adminButton').style.display = 'none';
+    }
 }
 
 function logout() {
@@ -361,6 +368,12 @@ function showFeedback(message, type = 'default') {
 // ==================== ADMIN FUNCTIONS ====================
 
 function toggleAdminPanel() {
+    // Security check: Only admin email can access
+    if (currentUser.email !== 'siddu.506223@gmail.com') {
+        alert('You do not have permission to access the admin panel');
+        return;
+    }
+    
     const adminPanel = document.getElementById('adminPanelView');
     const dashboard = document.getElementById('dashboardView');
     

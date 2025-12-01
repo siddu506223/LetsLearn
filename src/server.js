@@ -470,9 +470,19 @@ app.post('/api/quizzes/submit/:userId', (req, res) => {
 
 // ==================== ADMIN ROUTES ====================
 
+// Helper function to check if user is admin
+function isAdminUser(email) {
+    return email === 'siddu.506223@gmail.com';
+}
+
 // DELETE: Delete a user (admin only - checks device identifier)
 app.post('/api/admin/delete-user', (req, res) => {
-    const { userId, deviceId } = req.body;
+    const { userId, deviceId, email } = req.body;
+    
+    // Security: Check admin email
+    if (!isAdminUser(email)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized - Admin access required' });
+    }
     
     // Security: Only allow from localhost or specific device ID
     const clientIp = req.ip;
@@ -497,6 +507,13 @@ app.post('/api/admin/delete-user', (req, res) => {
 
 // GET: Get all users for admin panel
 app.get('/api/admin/users', (req, res) => {
+    const email = req.query.email;
+    
+    // Security: Check admin email
+    if (!isAdminUser(email)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized - Admin access required' });
+    }
+    
     // Security: Only allow from localhost
     const clientIp = req.ip;
     const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
@@ -525,6 +542,13 @@ app.get('/api/admin/users', (req, res) => {
 
 // POST: Edit user grade
 app.post('/api/admin/edit-user-grade', (req, res) => {
+    const { userId, grade, email } = req.body;
+    
+    // Security: Check admin email
+    if (!isAdminUser(email)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized - Admin access required' });
+    }
+    
     // Security: Only allow from localhost
     const clientIp = req.ip;
     const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
@@ -532,8 +556,6 @@ app.post('/api/admin/edit-user-grade', (req, res) => {
     if (!isLocalhost) {
         return res.status(403).json({ success: false, error: 'Unauthorized' });
     }
-    
-    const { userId, grade } = req.body;
     
     if (!userId || !grade) {
         return res.status(400).json({ success: false, error: 'User ID and grade required' });
@@ -550,6 +572,13 @@ app.post('/api/admin/edit-user-grade', (req, res) => {
 
 // GET: Get all parents for admin panel
 app.get('/api/admin/parents', (req, res) => {
+    const email = req.query.email;
+    
+    // Security: Check admin email
+    if (!isAdminUser(email)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized - Admin access required' });
+    }
+    
     // Security: Only allow from localhost
     const clientIp = req.ip;
     const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
