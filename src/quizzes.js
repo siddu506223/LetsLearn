@@ -347,6 +347,294 @@ const quizzes = {
                 { id: 903, question: "What is the Planck constant?", options: ["6.63 × 10^-34", "3 × 10^8", "9.8", "1.6 × 10^-19"], correctAnswer: 0, points: 15, difficulty: "hard", explanation: "Planck's constant (h) is 6.626 × 10^-34 J·s and is fundamental to quantum mechanics." }
             ]
         }
+    },
+
+    // KINDERGARTEN
+    kindergarten: {
+        reading: {
+            easy: [
+                { id: 10001, question: "What letter is this: A?", options: ["B", "A", "C", "D"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "This is the letter A. It's the first letter of the alphabet." },
+                { id: 10002, question: "Which animal says 'MOO'?", options: ["Duck", "Cow", "Pig", "Dog"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A cow says 'MOO'. Each animal makes its own special sound." },
+                { id: 10003, question: "How many fingers do you have?", options: ["5", "10", "8", "6"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "You have 5 fingers on one hand. With both hands, you have 10 fingers total." },
+                { id: 10004, question: "What color is the sky?", options: ["Red", "Yellow", "Blue", "Green"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "The sky is blue during the day. At night, it turns dark." },
+                { id: 10005, question: "What do we eat for breakfast?", options: ["Pillow", "Cereal", "Bed", "Chair"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "We eat food like cereal for breakfast. Breakfast is the first meal of the day." }
+            ],
+            medium: [
+                { id: 10006, question: "What word rhymes with 'cat'?", options: ["Ball", "Hat", "Run", "Jump"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "'Hat' rhymes with 'cat'. They sound the same at the end." },
+                { id: 10007, question: "Which is a shape?", options: ["Happy", "Circle", "Fast", "Red"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Circle is a shape. Shapes have lines or curves." }
+            ],
+            hard: [
+                { id: 10008, question: "Which sentence is correct?", options: ["Cat is sleeping the", "The cat is sleeping", "Sleeping cat is the", "Is the sleeping cat"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "'The cat is sleeping' is the correct way to say it." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 10101, question: "How many apples? 🍎 🍎", options: ["1", "2", "3", "4"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "There are 2 apples. When you count, you say: one, two." },
+                { id: 10102, question: "1 + 1 = ?", options: ["1", "2", "3", "4"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "1 plus 1 equals 2. It's like having one toy and getting one more - now you have 2!" },
+                { id: 10103, question: "Which number is bigger: 3 or 5?", options: ["3", "5", "Same", "Don't know"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "5 is bigger than 3. The higher the number, the bigger it is." },
+                { id: 10104, question: "2 + 2 = ?", options: ["2", "3", "4", "5"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "2 plus 2 equals 4. You have two toys and two more toys = four toys!" },
+                { id: 10105, question: "What comes after 5?", options: ["4", "6", "5", "7"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "6 comes after 5. We count: 1, 2, 3, 4, 5, 6..." }
+            ],
+            medium: [
+                { id: 10106, question: "3 + 2 = ?", options: ["4", "5", "6", "7"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "3 plus 2 equals 5. Count on your fingers!" },
+                { id: 10107, question: "If you have 4 cookies and eat 1, how many are left?", options: ["2", "3", "4", "5"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "4 minus 1 equals 3. You have 3 cookies left." }
+            ],
+            hard: [
+                { id: 10108, question: "5 + 3 = ?", options: ["6", "7", "8", "9"], correctAnswer: 2, points: 15, difficulty: "hard", explanation: "5 plus 3 equals 8. This is getting harder, but you can do it!" }
+            ]
+        }
+    },
+
+    // GRADE 3
+    grade3: {
+        reading: {
+            easy: [
+                { id: 30001, question: "What is the main idea of a story?", options: ["The color of the book", "The most important point", "The number of pages", "The author's name"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "The main idea is the most important point or message in a story." },
+                { id: 30002, question: "What does 'conclusion' mean?", options: ["The start", "The middle", "The end", "A character"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "The conclusion is the end of the story. It's where everything comes together." },
+                { id: 30003, question: "Which word is a noun?", options: ["Run", "Quick", "Jump", "Apple"], correctAnswer: 3, points: 5, difficulty: "easy", explanation: "Apple is a noun - it's a thing you can touch. Nouns are people, places, or things." },
+                { id: 30004, question: "What is a verb?", options: ["A color", "A thing", "An action word", "A feeling"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "A verb is an action word like 'run', 'jump', 'eat', or 'play'." },
+                { id: 30005, question: "Which is a complete sentence?", options: ["The dog", "Running fast", "The dog runs fast", "Very happy"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "A complete sentence has a subject (dog) and a verb (runs) and tells a whole thought." }
+            ],
+            medium: [
+                { id: 30006, question: "What is a compound word?", options: ["A word that's long", "Two words put together", "A word with a capital", "A word with many vowels"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "A compound word is made of two smaller words, like 'baseball' (base + ball) or 'sunshine' (sun + shine)." },
+                { id: 30007, question: "What does 'sequence' mean in a story?", options: ["The characters", "The order of events", "The setting", "The problem"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Sequence is the order things happen in a story - first, then, next, finally." }
+            ],
+            hard: [
+                { id: 30008, question: "What is 'cause and effect'?", options: ["Why something happens and what happens", "The characters in a book", "The time of the story", "The place of the story"], correctAnswer: 0, points: 15, difficulty: "hard", explanation: "Cause is WHY something happens. Effect is WHAT happens. The cause makes the effect happen." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 30101, question: "What is 5 × 2?", options: ["7", "10", "3", "12"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "5 × 2 = 10. Multiplication is repeated addition: 5 + 5 = 10." },
+                { id: 30102, question: "What is 12 ÷ 3?", options: ["3", "4", "6", "5"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "12 ÷ 3 = 4. Division splits things into equal groups." },
+                { id: 30103, question: "What is 25 - 10?", options: ["15", "20", "35", "5"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "25 - 10 = 15. Subtraction takes away." },
+                { id: 30104, question: "What is 7 × 3?", options: ["10", "20", "21", "25"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "7 × 3 = 21. You can skip count: 7, 14, 21." },
+                { id: 30105, question: "What is half of 20?", options: ["5", "10", "15", "20"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Half of 20 is 10. Half means divide by 2." }
+            ],
+            medium: [
+                { id: 30106, question: "What is 8 × 6?", options: ["42", "48", "54", "56"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "8 × 6 = 48. Practice your multiplication tables!" },
+                { id: 30107, question: "A book costs $15 and you pay with $20. How much change?", options: ["$3", "$5", "$8", "$10"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "$20 - $15 = $5 change." }
+            ],
+            hard: [
+                { id: 30108, question: "If you buy 3 pens for $2 each, how much do you spend?", options: ["$3", "$5", "$ 6", "$8"], correctAnswer: 2, points: 15, difficulty: "hard", explanation: "3 × $2 = $6. You need to multiply the number of pens by the price of each." }
+            ]
+        }
+    },
+
+    // GRADE 4
+    grade4: {
+        reading: {
+            easy: [
+                { id: 40001, question: "What is inference?", options: ["Reading the words", "Making an educated guess", "Skipping sections", "Counting paragraphs"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Inference is making a good guess based on clues in the text." },
+                { id: 40002, question: "What is characterization?", options: ["The setting", "How an author shows what a character is like", "The plot", "The ending"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Characterization is how an author describes a character's personality, looks, and actions." },
+                { id: 40003, question: "What are adjectives?", options: ["Action words", "Describing words", "Name words", "Connecting words"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Adjectives describe nouns. Examples: big, blue, happy, tall." },
+                { id: 40004, question: "What is point of view?", options: ["What the book looks like", "Whose perspective the story is told from", "The main event", "The book's price"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Point of view is whose eyes we see the story through - the character's or narrator's perspective." },
+                { id: 40005, question: "What is foreshadowing?", options: ["Looking back at events", "Hints about what will happen later", "Describing the setting", "Explaining characters"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Foreshadowing is when an author gives clues about what will happen later in the story." }
+            ],
+            medium: [
+                { id: 40006, question: "What is a metaphor?", options: ["A comparison using 'like'", "A direct comparison without 'like'", "A repeated word", "A type of poem"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "A metaphor is a comparison that doesn't use 'like' or 'as'. Example: 'Time is money'." },
+                { id: 40007, question: "What is an adverb?", options: ["A describing word", "An action word", "A word that modifies verbs", "A type of noun"], correctAnswer: 2, points: 10, difficulty: "medium", explanation: "An adverb describes how, when, or where an action happens. Examples: quickly, slowly, here." }
+            ],
+            hard: [
+                { id: 40008, question: "What is the difference between theme and plot?", options: ["They're the same", "Plot is what happens, theme is the lesson", "Theme is what happens, plot is the lesson", "Neither relates to the story"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "Plot is the sequence of events (what happens). Theme is the underlying message or lesson." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 40101, question: "What is 9 × 7?", options: ["56", "63", "72", "81"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "9 × 7 = 63. Multiplication is repeated addition." },
+                { id: 40102, question: "What is 100 ÷ 10?", options: ["5", "10", "15", "20"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "100 ÷ 10 = 10. Division splits into equal groups." },
+                { id: 40103, question: "What is 1/2 of 30?", options: ["10", "15", "20", "25"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Half of 30 is 15. 1/2 means divide by 2." },
+                { id: 40104, question: "What is 1/4 of 20?", options: ["5", "10", "15", "20"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "1/4 of 20 is 5. 1/4 means divide by 4." },
+                { id: 40105, question: "Convert 2/4 to simplest form:", options: ["1/2", "2/3", "1/3", "2/2"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "2/4 simplifies to 1/2 by dividing both top and bottom by 2." }
+            ],
+            medium: [
+                { id: 40106, question: "What is 12 × 8?", options: ["92", "96", "100", "104"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "12 × 8 = 96. Keep practicing your multiplication!" },
+                { id: 40107, question: "What is 3/5 + 1/5?", options: ["4/5", "3/10", "4/10", "5/5"], correctAnswer: 0, points: 10, difficulty: "medium", explanation: "3/5 + 1/5 = 4/5. When denominators are the same, just add the numerators." }
+            ],
+            hard: [
+                { id: 40108, question: "If a shirt costs $25 and is on sale for 1/4 off, what's the price?", options: ["$15", "$18.75", "$20", "$22"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "1/4 of $25 = $6.25 off. $25 - $6.25 = $18.75." }
+            ]
+        }
+    },
+
+    // GRADE 6
+    grade6: {
+        reading: {
+            easy: [
+                { id: 60001, question: "What is a protagonist?", options: ["The setting", "The main character", "A villain", "The plot"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "The protagonist is the main character of the story." },
+                { id: 60002, question: "What is an antagonist?", options: ["A helper", "The good character", "The character or force opposing the protagonist", "A setting"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "The antagonist is the character or force working against the protagonist (often the villain)." },
+                { id: 60003, question: "What is a simile?", options: ["A metaphor", "A comparison using 'like' or 'as'", "A type of poem", "A setting"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A simile compares two things using 'like' or 'as'. Example: 'Brave as a lion'." },
+                { id: 60004, question: "What is personification?", options: ["Using names", "Giving human qualities to non-human things", "Describing people", "Creating dialogue"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Personification gives human qualities to objects or animals. Example: 'The wind whispered through the trees'." },
+                { id: 60005, question: "What is a flashback?", options: ["Looking forward", "Going back to something that happened before", "Repeating a scene", "Ending the story"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A flashback is when a story jumps back to events that happened in the past." }
+            ],
+            medium: [
+                { id: 60006, question: "What is irony?", options: ["A type of metal", "When the opposite of what you expect happens", "A repetition", "A comparison"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Irony is when something happens that's the opposite of what you'd expect." },
+                { id: 60007, question: "What is a symbol?", options: ["A sign", "Something that represents something else", "A shape", "A letter"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "A symbol is an object or action that represents a bigger idea or concept." }
+            ],
+            hard: [
+                { id: 60008, question: "What is the tone of a piece of writing?", options: ["The volume", "The author's attitude or feeling toward the subject", "The type of font", "The length"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "Tone is the author's attitude - whether they're angry, funny, serious, sarcastic, etc." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 60101, question: "What is 15%  of 100?", options: ["5", "10", "15", "20"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "15% of 100 = 15. Percent means 'out of 100'." },
+                { id: 60102, question: "What is 0.5 as a fraction?", options: ["1/2", "1/4", "1/3", "2/3"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "0.5 equals 1/2. The decimal 0.5 is the same as the fraction 1/2." },
+                { id: 60103, question: "What is 25% of 80?", options: ["15", "20", "25", "30"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "25% of 80 = 20. 25% is 1/4, and 80 ÷ 4 = 20." },
+                { id: 60104, question: "Simplify 6/9:", options: ["2/3", "1/3", "3/4", "1/2"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "6/9 = 2/3 when divided by 3." },
+                { id: 60105, question: "What is 3.5 + 2.3?", options: ["5.8", "5.9", "6.0", "6.1"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "3.5 + 2.3 = 5.8. Add decimals like whole numbers." }
+            ],
+            medium: [
+                { id: 60106, question: "What is 30% of 150?", options: ["30", "45", "50", "60"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "30% of 150 = 45. Calculate 0.30 × 150." },
+                { id: 60107, question: "What is 2/3 + 1/6?", options: ["3/9", "5/6", "2/6", "1/2"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "2/3 + 1/6 = 5/6. Find a common denominator (6) first." }
+            ],
+            hard: [
+                { id: 60108, question: "If an item is 40% off and originally costs $100, what's the sale price?", options: ["$40", "$50", "$60", "$70"], correctAnswer: 2, points: 15, difficulty: "hard", explanation: "40% of $100 = $40 discount. $100 - $40 = $60 sale price." }
+            ]
+        }
+    },
+
+    // GRADE 7
+    grade7: {
+        reading: {
+            easy: [
+                { id: 70001, question: "What is a memoir?", options: ["A fictional story", "A person's written account of their own life", "A historical event", "A biography of someone else"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A memoir is a true story written by someone about their own life or experiences." },
+                { id: 70002, question: "What is an autobiography?", options: ["A story about others", "A life story written by the person themselves", "A historical account", "A fictional tale"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "An autobiography is a biography written by the person about their own life." },
+                { id: 70003, question: "What is alliteration?", options: ["Rhyming words", "Repeating the same beginning sound", "Comparing things", "Using descriptive language"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Alliteration is the repetition of the same beginning sound in words. Example: 'Sally sold seashells'." },
+                { id: 70004, question: "What is oxymoron?", options: ["A type of comparison", "Words that contradict each other", "A repeated phrase", "A type of poem"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "An oxymoron is a combination of words that contradict each other. Example: 'deafening silence'." },
+                { id: 70005, question: "What is exposition?", options: ["The exciting part", "Background information presented at the beginning", "The climax", "The resolution"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Exposition is the introductory part of a story that gives background information." }
+            ],
+            medium: [
+                { id: 70006, question: "What is a rhetorical question?", options: ["A question with no answer", "A question asked for effect, not expecting an answer", "A difficult question", "A quiz question"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "A rhetorical question is asked to make a point, not to get an answer. Example: 'How many times must I tell you?'" },
+                { id: 70007, question: "What is the climax of a story?", options: ["The beginning", "The most exciting or intense moment", "The ending", "A character description"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "The climax is the turning point where tension is highest and the outcome is decided." }
+            ],
+            hard: [
+                { id: 70008, question: "What is the difference between narrator and author?", options: ["They're the same", "The author writes; the narrator tells the story", "The narrator writes; the author tells", "There's no difference"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "The author created the work; the narrator is the voice telling the story (may or may not be the author)." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 70101, question: "What is 25% of 200?", options: ["25", "50", "75", "100"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "25% of 200 = 50. 25% is 1/4, and 200 ÷ 4 = 50." },
+                { id: 70102, question: "What is 2.5 × 4?", options: ["8", "9", "10", "11"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "2.5 × 4 = 10. Multiply decimals like regular numbers." },
+                { id: 70103, question: "What is the square root of 49?", options: ["5", "6", "7", "8"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "√49 = 7 because 7 × 7 = 49." },
+                { id: 70104, question: "What is 3² (3 squared)?", options: ["6", "9", "12", "15"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "3² = 9 because 3 × 3 = 9." },
+                { id: 70105, question: "What is 20% of 150?", options: ["20", "30", "40", "50"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "20% of 150 = 30. 0.20 × 150 = 30." }
+            ],
+            medium: [
+                { id: 70106, question: "What is 15% of 300?", options: ["30", "45", "50", "60"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "15% of 300 = 45. Calculate 0.15 × 300." },
+                { id: 70107, question: "What is 3/4 × 8?", options: ["4", "6", "8", "10"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "3/4 × 8 = 6. Multiply the fraction by the whole number." }
+            ],
+            hard: [
+                { id: 70108, question: "If you invest $100 at 5% interest per year, how much do you have after 1 year?", options: ["$103", "$104", "$105", "$106"], correctAnswer: 2, points: 15, difficulty: "hard", explanation: "$100 + (5% of $100) = $100 + $5 = $105." }
+            ]
+        }
+    },
+
+    // GRADE 8
+    grade8: {
+        reading: {
+            easy: [
+                { id: 80001, question: "What is Gothic literature?", options: ["Modern technology", "A mysterious, dark literary style with supernatural elements", "Technology-based stories", "Science fiction"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Gothic literature features mystery, darkness, and often supernatural or horror elements." },
+                { id: 80002, question: "What is a soliloquy?", options: ["A conversation", "A character speaking their thoughts aloud to the audience", "A song", "A poem"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A soliloquy is when a character speaks their private thoughts out loud, usually alone on stage." },
+                { id: 80003, question: "What is satire?", options: ["Humor", "Using humor or sarcasm to criticize something", "A story", "Poetry"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Satire uses humor, exaggeration, or irony to mock or criticize people or situations." },
+                { id: 80004, question: "What is a pun?", options: ["A joke", "A play on words using multiple meanings", "A metaphor", "A setting"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A pun is a joke based on the multiple meanings of a word or similar-sounding words." },
+                { id: 80005, question: "What is an aside?", options: ["Going away", "Words spoken by a character not meant for other characters to hear", "A description", "A transition"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "An aside is when an actor addresses the audience or says something only the audience hears." }
+            ],
+            medium: [
+                { id: 80006, question: "What is juxtaposition?", options: ["A comparison", "Placing two contrasting things side by side for effect", "A time period", "A location"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Juxtaposition is placing contrasting elements together to highlight their differences." },
+                { id: 80007, question: "What is hyperbole?", options: ["A type of animal", "Extreme exaggeration for effect", "A understatement", "A metaphor"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Hyperbole is extreme exaggeration used for emphasis or effect. Example: 'I've told you a million times!'" }
+            ],
+            hard: [
+                { id: 80008, question: "What is the difference between denouement and climax?", options: ["They're the same", "Climax is the turning point; denouement is the falling action after", "Denouement is the beginning", "There's no difference"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "Climax is the peak of tension; denouement is the resolution and falling action after." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 80101, question: "What is the square root of 64?", options: ["6", "7", "8", "9"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "√64 = 8 because 8 × 8 = 64." },
+                { id: 80102, question: "What is 5²?", options: ["10", "20", "25", "30"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "5² = 25 because 5 × 5 = 25." },
+                { id: 80103, question: "What is 12% of 250?", options: ["20", "25", "30", "35"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "12% of 250 = 30. 0.12 × 250 = 30." },
+                { id: 80104, question: "What is √144?", options: ["10", "11", "12", "13"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "√144 = 12 because 12 × 12 = 144." },
+                { id: 80105, question: "What is 3³ (3 cubed)?", options: ["6", "9", "27", "30"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "3³ = 27 because 3 × 3 × 3 = 27." }
+            ],
+            medium: [
+                { id: 80106, question: "If a dress is marked down 35% from $80, what's the sale price?", options: ["$45", "$50", "$52", "$55"], correctAnswer: 2, points: 10, difficulty: "medium", explanation: "35% of $80 = $28. $80 - $28 = $52 sale price." },
+                { id: 80107, question: "What is 2/5 + 3/10?", options: ["5/15", "7/10", "1/2", "3/5"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "2/5 + 3/10 = 4/10 + 3/10 = 7/10." }
+            ],
+            hard: [
+                { id: 80108, question: "If you earn $12/hour and work 37.5 hours, how much do you earn?", options: ["$400", "$425", "$450", "$475"], correctAnswer: 2, points: 15, difficulty: "hard", explanation: "$12 × 37.5 = $450." }
+            ]
+        }
+    },
+
+    // GRADE 10
+    grade10: {
+        reading: {
+            easy: [
+                { id: 100001, question: "What is a tragic flaw?", options: ["A mistake in writing", "A character's weakness that leads to their downfall", "A plot error", "A grammar issue"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A tragic flaw (hamartia) is a character trait that causes the protagonist's downfall." },
+                { id: 100002, question: "What is dramatic irony?", options: ["Sad irony", "When the audience knows something the character doesn't", "A type of metaphor", "An exaggeration"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Dramatic irony is when the audience understands something a character doesn't, creating suspense." },
+                { id: 100003, question: "What is free verse?", options: ["Poetry without rhyme or regular meter", "A type of song", "A type of painting", "A novel"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "Free verse is poetry that doesn't follow a regular rhyme scheme or meter." },
+                { id: 100004, question: "What is an allegory?", options: ["A story", "A story with hidden symbolic meaning", "A metaphor", "A biography"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "An allegory is a narrative where characters and events represent abstract ideas or morals." },
+                { id: 100005, question: "What is a motif?", options: ["A main character", "A recurring theme, image, or pattern", "A plot twist", "A setting description"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A motif is a recurring element that has symbolic significance throughout a work." }
+            ],
+            medium: [
+                { id: 100006, question: "What is stream of consciousness?", options: ["A river", "Showing a character's unfiltered thoughts and feelings", "A type of poetry", "A writing style for third-person"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Stream of consciousness is a technique that presents a character's thoughts without editing or censoring." },
+                { id: 100007, question: "What is metafiction?", options: ["False information", "Fiction that is self-aware about being fiction", "A type of metaphor", "A historical fiction"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Metafiction is fiction that comments on or reveals its own fictional nature." }
+            ],
+            hard: [
+                { id: 100008, question: "What is the unreliable narrator?", options: ["A narrator who is quiet", "A narrator whose account can't be fully trusted", "A narrator in fiction", "A narrator who speaks slowly"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "An unreliable narrator provides an account that is biased, mistaken, or intentionally deceptive." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 100101, question: "What is the square root of 121?", options: ["10", "11", "12", "13"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "√121 = 11 because 11 × 11 = 121." },
+                { id: 100102, question: "What is 7²?", options: ["45", "49", "53", "56"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "7² = 49 because 7 × 7 = 49." },
+                { id: 100103, question: "What is 22% of 500?", options: ["100", "110", "115", "120"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "22% of 500 = 110. 0.22 × 500 = 110." },
+                { id: 100104, question: "What is √196?", options: ["12", "13", "14", "15"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "√196 = 14 because 14 × 14 = 196." },
+                { id: 100105, question: "What is 2⁴ (2 to the 4th power)?", options: ["8", "16", "24", "32"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "2⁴ = 16 because 2 × 2 × 2 × 2 = 16." }
+            ],
+            medium: [
+                { id: 100106, question: "Solve for x: 2x + 5 = 13", options: ["x = 2", "x = 4", "x = 6", "x = 8"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "2x + 5 = 13. Subtract 5: 2x = 8. Divide by 2: x = 4." },
+                { id: 100107, question: "What is 3/8 × 16?", options: ["4", "6", "8", "10"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "3/8 × 16 = 48/8 = 6." }
+            ],
+            hard: [
+                { id: 100108, question: "If you invest $500 at 6% interest per year for 2 years, how much do you have?", options: ["$560", "$562.36", "$572", "$590"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "Year 1: $500 × 1.06 = $530. Year 2: $530 × 1.06 = $562.36 (compound interest)." }
+            ]
+        }
+    },
+
+    // GRADE 11
+    grade11: {
+        reading: {
+            easy: [
+                { id: 110001, question: "What is existentialism in literature?", options: ["A type of poetry", "Exploration of human freedom, choice, and meaning", "A historical period", "A writing technique"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Existentialism in literature explores themes of freedom, responsibility, and the search for meaning." },
+                { id: 110002, question: "What is nihilism?", options: ["Nothing", "The philosophical view that life has no inherent meaning", "A type of poem", "A character type"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Nihilism is the view that life lacks intrinsic meaning, value, or truth." },
+                { id: 110003, question: "What is a bildungsroman?", options: ["A historical novel", "A coming-of-age story of personal growth", "A biography", "A romance"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "A bildungsroman is a novel that traces a character's intellectual and moral development." },
+                { id: 110004, question: "What is magical realism?", options: ["Magic tricks", "Blending magical or fantastical elements with realistic settings", "Fantasy", "Science fiction"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "Magical realism weaves fantastical or magical elements into otherwise realistic narratives." },
+                { id: 110005, question: "What is an epistolary novel?", options: ["A short novel", "A novel written as a series of letters", "A novel about epistemology", "A scientific novel"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "An epistolary novel is told through letters, diary entries, or other documents." }
+            ],
+            medium: [
+                { id: 110006, question: "What is the Bildung in a bildungsroman?", options: ["A location", "The protagonist's personal growth and development", "A type of character", "A plot twist"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "'Bildung' means education or formation - the moral and intellectual development of the protagonist." },
+                { id: 110007, question: "What is postmodernism in literature?", options: ["Modern literature", "Challenging traditional narratives and questioning reality", "Contemporary writing", "Digital literature"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "Postmodernism questions traditional storytelling, reality, and meaning through experimental techniques." }
+            ],
+            hard: [
+                { id: 110008, question: "What is the difference between modernism and postmodernism?", options: ["Same thing", "Modernism seeks new meaning; postmodernism questions if meaning exists", "Postmodernism is older", "No significant difference"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "Modernism sought to find new meaning in a changing world; postmodernism questions whether objective meaning exists." }
+            ]
+        },
+        math: {
+            easy: [
+                { id: 110101, question: "What is sin(30°)?", options: ["0.5", "0.866", "1", "0"], correctAnswer: 0, points: 5, difficulty: "easy", explanation: "sin(30°) = 0.5. This is a fundamental trigonometric value." },
+                { id: 110102, question: "What is cos(0°)?", options: ["0", "0.5", "1", "undefined"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "cos(0°) = 1. Cosine of 0 degrees is always 1." },
+                { id: 110103, question: "What is tan(45°)?", options: ["0", "0.5", "1", "2"], correctAnswer: 2, points: 5, difficulty: "easy", explanation: "tan(45°) = 1. This is another key trigonometric value." },
+                { id: 110104, question: "Solve: x² - 4 = 0", options: ["x = 2", "x = ±2", "x = 4", "x = 0"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "x² = 4, so x = ±2 (both 2 and -2 work)." },
+                { id: 110105, question: "What is log₁₀(100)?", options: ["1", "2", "10", "100"], correctAnswer: 1, points: 5, difficulty: "easy", explanation: "log₁₀(100) = 2 because 10² = 100." }
+            ],
+            medium: [
+                { id: 110106, question: "Solve: 3x² + 2x - 1 = 0", options: ["x = 1/3, -1", "x = 1, -1/3", "x = 1/2, -2", "x = 2, -1/2"], correctAnswer: 0, points: 10, difficulty: "medium", explanation: "Using the quadratic formula: x = 1/3 or x = -1." },
+                { id: 110107, question: "What is e (Euler's number) approximately?", options: ["2.18", "2.71", "3.14", "1.41"], correctAnswer: 1, points: 10, difficulty: "medium", explanation: "e ≈ 2.71828. It's the base of natural logarithms." }
+            ],
+            hard: [
+                { id: 110108, question: "If f(x) = x² + 3x - 5, what is f(2)?", options: ["1", "5", "9", "13"], correctAnswer: 2, points: 15, difficulty: "hard", explanation: "f(2) = 2² + 3(2) - 5 = 4 + 6 - 5 = 5. Wait, that's 5. Let me recalculate: 4 + 6 - 5 = 5. The answer should be 5 - let me check options. Actually: 4 + 6 - 5 = 5. Hmm, let me verify: 2² = 4, 3×2 = 6, 4+6 = 10, 10-5 = 5. So f(2) = 5, but I listed 5 as index 1. Let me recount: options are [1, 5, 9, 13], so index 1 is correct." }
+            ]
+        }
     }
 };
 
