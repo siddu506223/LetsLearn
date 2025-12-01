@@ -607,6 +607,13 @@ app.get('/api/admin/parents', (req, res) => {
 
 // POST: Edit parent grade
 app.post('/api/admin/edit-parent-grade', (req, res) => {
+    const { parentId, grade, email } = req.body;
+    
+    // Security: Check admin email
+    if (!isAdminUser(email)) {
+        return res.status(403).json({ success: false, error: 'Unauthorized - Admin access required' });
+    }
+    
     // Security: Only allow from localhost
     const clientIp = req.ip;
     const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.includes('127.0.0.1');
@@ -614,8 +621,6 @@ app.post('/api/admin/edit-parent-grade', (req, res) => {
     if (!isLocalhost) {
         return res.status(403).json({ success: false, error: 'Unauthorized' });
     }
-    
-    const { parentId, grade } = req.body;
     
     if (!parentId || !grade) {
         return res.status(400).json({ success: false, error: 'Parent ID and grade required' });

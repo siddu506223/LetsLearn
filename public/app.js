@@ -419,7 +419,8 @@ async function deleteUserAdmin() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 userId: parseInt(userId),
-                deviceId: 'admin_device_123'  // Device identifier for security
+                deviceId: 'admin_device_123',  // Device identifier for security
+                email: currentUser.email
             })
         });
         
@@ -440,7 +441,7 @@ async function deleteUserAdmin() {
 
 async function loadAdminUsers() {
     try {
-        const response = await fetch('/api/admin/users');
+        const response = await fetch(`/api/admin/users?email=${encodeURIComponent(currentUser.email)}`);
         const data = await response.json();
         
         if (data.success && data.users) {
@@ -509,7 +510,7 @@ function switchAdminTab(tab) {
 // Load and display all parents
 async function loadAdminParents() {
     try {
-        const response = await fetch('/api/admin/parents');
+        const response = await fetch(`/api/admin/parents?email=${encodeURIComponent(currentUser.email)}`);
         const data = await response.json();
         
         if (data.success && data.parents) {
@@ -579,7 +580,7 @@ async function saveUserGradeEdit() {
         const response = await fetch('/api/admin/edit-user-grade', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, grade: newGrade })
+            body: JSON.stringify({ userId, grade: newGrade, email: currentUser.email })
         });
         
         const data = await response.json();
@@ -627,7 +628,7 @@ async function saveParentGradeEdit() {
         const response = await fetch('/api/admin/edit-parent-grade', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ parentId, grade: newGrade })
+            body: JSON.stringify({ parentId, grade: newGrade, email: currentUser.email })
         });
         
         const data = await response.json();
