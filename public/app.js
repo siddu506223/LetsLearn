@@ -15,6 +15,19 @@ let currentDifficulty = 'easy'; // easy, medium, hard
 let consecutiveCorrect = 0;
 let consecutiveIncorrect = 0;
 
+// ==================== ERROR HANDLING ====================
+
+// Silent error logging - only show alerts for network errors
+function handleError(errorMessage, context = 'Operation') {
+    console.error(`${context}: ${errorMessage}`);
+    
+    // Only show alert if it's a network error
+    if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || !navigator.onLine) {
+        alert('⚠️ No internet connection. Please check your network and try again.');
+    }
+    // For all other errors, just log them silently
+}
+
 // ==================== TITLE & LOGIN SCREEN ====================
 
 function goToLoginScreen(type = 'student') {
@@ -427,15 +440,14 @@ async function deleteUserAdmin() {
         const data = await response.json();
         
         if (data.success) {
-            alert(`User ${userId} has been deleted successfully`);
+            showFeedback(`User ${userId} deleted successfully`, 'excellent');
             document.getElementById('userIdToDelete').value = '';
             loadAdminUsers();  // Refresh the user list
         } else {
-            alert(data.error || 'Failed to delete user');
+            handleError(data.error || 'Failed to delete user', 'Delete User');
         }
     } catch (error) {
-        console.error('Error deleting user:', error);
-        alert('Error deleting user');
+        handleError(error.message, 'Delete User');
     }
 }
 
@@ -586,15 +598,14 @@ async function saveUserGradeEdit() {
         const data = await response.json();
         
         if (data.success) {
-            alert('User grade updated successfully!');
+            showFeedback('User grade updated successfully', 'excellent');
             closeEditUserModal();
             loadAdminUsers();  // Refresh the list
         } else {
-            alert(data.error || 'Failed to update user grade');
+            handleError(data.error || 'Failed to update user grade', 'Update User Grade');
         }
     } catch (error) {
-        console.error('Error updating user grade:', error);
-        alert('Error updating user grade');
+        handleError(error.message, 'Update User Grade');
     }
 }
 
@@ -634,15 +645,14 @@ async function saveParentGradeEdit() {
         const data = await response.json();
         
         if (data.success) {
-            alert('Parent grade updated successfully!');
+            showFeedback('Parent grade updated successfully', 'excellent');
             closeEditParentModal();
             loadAdminParents();  // Refresh the list
         } else {
-            alert(data.error || 'Failed to update parent grade');
+            handleError(data.error || 'Failed to update parent grade', 'Update Parent Grade');
         }
     } catch (error) {
-        console.error('Error updating parent grade:', error);
-        alert('Error updating parent grade');
+        handleError(error.message, 'Update Parent Grade');
     }
 }
 
@@ -872,12 +882,10 @@ async function startQuiz(subject, difficulty) {
             
             displayQuestion();
         } else {
-            alert('Error loading quiz');
-            console.error('Quiz loading error:', response.status);
+            handleError(`Quiz loading error: ${response.status}`, 'Quiz Load');
         }
     } catch (error) {
-        console.error('Error starting quiz:', error);
-        alert('Error starting quiz');
+        handleError(error.message, 'Quiz Start');
     }
 }
 
@@ -1586,8 +1594,7 @@ async function viewLeaderboard() {
         
         showFeedback('Worldwide Rankings!', 'excellent');
     } catch (error) {
-        console.error('Error loading leaderboard:', error);
-        alert('Error loading leaderboard');
+        handleError(error.message, 'Leaderboard Load');
     }
 }
 
@@ -1649,11 +1656,10 @@ async function viewAssignments(type) {
                 assignmentsList.appendChild(card);
             });
         } else {
-            alert('No assignments available for this grade');
+            // Silently handle no assignments
         }
     } catch (error) {
-        console.error('Error loading assignments:', error);
-        alert('Error loading assignments');
+        handleError(error.message, 'Assignments Load');
     }
 }
 
@@ -1734,8 +1740,7 @@ async function viewBoardGames() {
         document.getElementById('boardGamesView').classList.remove('view-hidden');
         document.getElementById('boardGamesView').classList.add('view-active');
     } catch (error) {
-        console.error('Error loading board games:', error);
-        alert('Error loading board games');
+        handleError(error.message, 'Board Games Load');
     }
 }
 
@@ -2092,8 +2097,7 @@ async function viewGradeContent(grade) {
             showFeedback(`Viewing ${grade} content!`, 'excellent');
         }
     } catch (error) {
-        console.error('Error loading grade content:', error);
-        alert('Error loading grade content');
+        handleError(error.message, 'Grade Content Load');
     }
 }
 
@@ -2124,8 +2128,7 @@ async function startGradeQuiz(grade, subject, difficulty) {
             showFeedback(`Starting ${grade} ${subject} ${difficulty}!`, 'excellent');
         }
     } catch (error) {
-        console.error('Error starting quiz:', error);
-        alert('Error starting quiz');
+        handleError(error.message, 'Grade Quiz Start');
     }
 }
 
