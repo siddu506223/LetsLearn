@@ -1204,7 +1204,6 @@ tr:hover {
     z-index: 0;
     border-radius: 10px;
 }
-}
 
 .title-main {
     font-size: 4.5rem;
@@ -1336,6 +1335,8 @@ tr:hover {
     width: 100%;
     max-width: 400px;
     animation: slideInUp 0.5s ease-out;
+    position: relative;
+    z-index: 10;
 }
 
 .login-box h1 {
