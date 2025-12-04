@@ -286,8 +286,10 @@
             <div id="optionsDisplay" class="options-grid"></div>
             <div id="resultDisplay" class="result-hidden"></div>
             <div id="explanationDisplay" class="explanation-hidden"></div>
-            <button id="nextBtn" onclick="nextQuestion()" style="display: none;" class="btn-primary">Next Question</button>
-            <button onclick="exitQuiz()" class="btn-secondary">Exit Quiz</button>
+            <div class="quiz-button-group">
+                <button id="nextBtn" onclick="nextQuestion()" style="display: none;" class="btn-primary btn-next">➡️ Next Question</button>
+                <button onclick="exitQuiz()" class="btn-secondary">❌ Exit Quiz</button>
+            </div>
         </div>
     </div>
 

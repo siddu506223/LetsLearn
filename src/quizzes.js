@@ -157,7 +157,24 @@ const quizzes = {
                 { id: 616, question: "What was the main cause of World War I?", options: ["Pearl Harbor", "Assassination of Archduke Franz Ferdinand", "Economic depression", "Religious conflict"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "The assassination of Archduke Franz Ferdinand triggered World War I." },
                 { id: 617, question: "What is the term for the period after the Civil War?", options: ["Renaissance", "Reconstruction", "Revolution", "Reform"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "Reconstruction was the period of rebuilding after the Civil War (1865-1877)." }
             ]
+        },
+        audio: {
+            easy: [
+                { id: 1201, question: "Listen to the animal sound. What does it say?", options: ["Meow", "Woof", "Moo", "Baa"], correctAnswer: 0, points: 5, difficulty: "easy", audioUrl: "/audio/cat-meow.mp3", explanation: "That's a cat! Cats say 'Meow'." },
+                { id: 1202, question: "Listen to the number. What number is it?", options: ["2", "3", "4", "5"], correctAnswer: 0, points: 5, difficulty: "easy", audioUrl: "/audio/number-2.mp3", explanation: "That's number 2! It comes after 1 and before 3." },
+                { id: 1203, question: "Listen to the word. Is it a noun or verb?", options: ["Noun (thing)", "Verb (action)"], correctAnswer: 1, points: 5, difficulty: "easy", audioUrl: "/audio/word-run.mp3", explanation: "'Run' is a verb. It's an action word!" },
+                { id: 1204, question: "Listen to the rhyming pair. Which word rhymes?", options: ["Map", "Hot", "Bat", "Dog"], correctAnswer: 2, points: 5, difficulty: "easy", audioUrl: "/audio/rhyme-cat.mp3", explanation: "'Cat' rhymes with 'bat'! They have the same ending sound 'at'." },
+                { id: 1205, question: "Listen to the sentence. Is it a question or statement?", options: ["Question", "Statement"], correctAnswer: 0, points: 5, difficulty: "easy", audioUrl: "/audio/question-mark.mp3", explanation: "That's a question! Questions ask for information and end with a question mark." }
+            ],
+            medium: [
+                { id: 1206, question: "Listen to the story. What is the main idea?", options: ["A dog plays", "A cat sleeps", "Birds fly", "Fish swim"], correctAnswer: 1, points: 10, difficulty: "medium", audioUrl: "/audio/story-cat-nap.mp3", explanation: "The story was about a cat taking a nap. That's the main thing that happened." },
+                { id: 1207, question: "Listen to the words. Which rhyme together?", options: ["Hat and bat", "Cat and dog", "Sun and fun", "Big and small"], correctAnswer: 2, points: 10, difficulty: "medium", audioUrl: "/audio/rhyme-sun-fun.mp3", explanation: "'Sun' and 'fun' rhyme! They end with the same 'un' sound." }
+            ],
+            hard: [
+                { id: 1208, question: "Listen to the sentence. What is the subject?", options: ["The dog", "Runs", "Fast", "In the park"], correctAnswer: 0, points: 15, difficulty: "hard", audioUrl: "/audio/sentence-subject.mp3", explanation: "'The dog' is the subject - the thing doing the action of running!" }
+            ]
         }
+
     },
 
     // GRADE 2 - NEW
@@ -279,7 +296,24 @@ const quizzes = {
                 { id: 2716, question: "What caused World War I?", options: ["Depression", "Assassination of Franz Ferdinand", "Slavery", "Religion"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "The assassination triggered WWI." },
                 { id: 2717, question: "What is the Magna Carta?", options: ["Food", "Limited royal power and rights", "Ship", "Battle"], correctAnswer: 1, points: 15, difficulty: "hard", explanation: "It limited the king's power and protected rights." }
             ]
+        },
+        audio: {
+            easy: [
+                { id: 2801, question: "Listen to the word. Can you spell it out loud?", options: ["Apple", "Dog", "Cat", "Book"], correctAnswer: 0, points: 5, difficulty: "easy", audioUrl: "/audio/word-apple.mp3", explanation: "That's the word 'apple'! A-P-P-L-E. Apples are a healthy fruit." },
+                { id: 2802, question: "Listen to the sentence. How many words?", options: ["2", "3", "4", "5"], correctAnswer: 1, points: 5, difficulty: "easy", audioUrl: "/audio/sentence-three.mp3", explanation: "That sentence had 3 words. One... two... three!" },
+                { id: 2803, question: "Listen to the animal sound. What animal?", options: ["Bird", "Pig", "Cow", "Duck"], correctAnswer: 0, points: 5, difficulty: "easy", audioUrl: "/audio/bird-chirp.mp3", explanation: "That's a bird chirping! Birds sing pretty songs." },
+                { id: 2804, question: "Listen to the rhyming words. Do they rhyme?", options: ["Yes", "No"], correctAnswer: 0, points: 5, difficulty: "easy", audioUrl: "/audio/rhyme-moon-soon.mp3", explanation: "Yes! 'Moon' and 'soon' rhyme. They both end with 'oon'." },
+                { id: 2805, question: "Listen to the story part. What happens first?", options: ["Girl runs", "Boy sits", "Dog plays", "Cat jumps"], correctAnswer: 0, points: 5, difficulty: "easy", audioUrl: "/audio/story-sequence.mp3", explanation: "First, the girl runs. Things happen in order called a sequence!" }
+            ],
+            medium: [
+                { id: 2806, question: "Listen to the story. What is the main character doing?", options: ["Reading a book", "Playing outside", "Eating lunch", "Sleeping"], correctAnswer: 1, points: 10, difficulty: "medium", audioUrl: "/audio/story-play.mp3", explanation: "The character was playing outside! That's the main action." },
+                { id: 2807, question: "Listen to the word pairs. Which pair rhymes?", options: ["Dog and cat", "Tree and bee", "Sun and rain", "Fly and swim"], correctAnswer: 1, points: 10, difficulty: "medium", audioUrl: "/audio/rhyme-tree-bee.mp3", explanation: "'Tree' and 'bee' rhyme! They both have the 'ee' sound." }
+            ],
+            hard: [
+                { id: 2808, question: "Listen to the passage. What is the cause and effect?", options: ["Because rain, puddles form", "Because sun, day comes", "Because wind, kites fly", "Because snow, play starts"], correctAnswer: 0, points: 15, difficulty: "hard", audioUrl: "/audio/cause-effect.mp3", explanation: "Because it rained, puddles formed! That's cause (rain) and effect (puddles)." }
+            ]
         }
+
     },
 
     // GRADE 5 - NEW
@@ -381,6 +415,22 @@ const quizzes = {
             ],
             hard: [
                 { id: 10108, question: "5 + 3 = ?", options: ["6", "7", "8", "9"], correctAnswer: 2, points: 15, difficulty: "hard", explanation: "5 plus 3 equals 8. This is getting harder, but you can do it!" }
+            ]
+        },
+        audio: {
+            easy: [
+                { id: 10201, question: "Listen to the animal sound. What animal is it?", options: ["Meow", "Woof", "Moo", "Baa"], correctAnswer: 1, points: 5, difficulty: "easy", audioUrl: "/audio/dog-bark.mp3", explanation: "That's the sound of a dog barking! Dogs say 'Woof!'." },
+                { id: 10202, question: "Listen to the letter sound. What letter is this?", options: ["B", "A", "C", "D"], correctAnswer: 1, points: 5, difficulty: "easy", audioUrl: "/audio/letter-a.mp3", explanation: "That's the letter A! It says 'aaa' like in apple." },
+                { id: 10203, question: "Listen to the number. How many times did you hear it?", options: ["1", "2", "3", "4"], correctAnswer: 1, points: 5, difficulty: "easy", audioUrl: "/audio/count-2.mp3", explanation: "You heard it 2 times! Let's count together: one, two." },
+                { id: 10204, question: "Listen to the color sound. What color word did you hear?", options: ["Red", "Blue", "Green", "Yellow"], correctAnswer: 2, points: 5, difficulty: "easy", audioUrl: "/audio/color-blue.mp3", explanation: "That was the word 'blue'! The sky is blue." },
+                { id: 10205, question: "Listen to the word. What is the opposite?", options: ["Big", "Fast", "Small", "Loud"], correctAnswer: 2, points: 5, difficulty: "easy", audioUrl: "/audio/word-big.mp3", explanation: "The word was 'big'. The opposite is 'small'!" }
+            ],
+            medium: [
+                { id: 10206, question: "Listen to two sounds. Which animal sound comes first?", options: ["Cat", "Dog", "Cow", "Bird"], correctAnswer: 0, points: 10, difficulty: "medium", audioUrl: "/audio/animals-cat-dog.mp3", explanation: "You heard the cat first (meow), then the dog (woof)!" },
+                { id: 10207, question: "Listen to the rhyming words. Which word rhymes with 'cat'?", options: ["Dog", "Hat", "Pig", "Run"], correctAnswer: 1, points: 10, difficulty: "medium", audioUrl: "/audio/rhyme-cat-hat.mp3", explanation: "'Cat' and 'hat' rhyme! They have the same ending sound." }
+            ],
+            hard: [
+                { id: 10208, question: "Listen to the sentence. How many words did you hear?", options: ["2", "3", "4", "5"], correctAnswer: 2, points: 15, difficulty: "hard", audioUrl: "/audio/sentence-three-words.mp3", explanation: "The sentence had 3 words. Try counting along with the words!" }
             ]
         }
     },
