@@ -160,6 +160,90 @@ async function handleSignup() {
     }
 }
 
+// ==================== GOOGLE SIGN-IN ====================
+
+async function googleSignIn() {
+    try {
+        // Initialize Google Sign-In
+        if (!window.google) {
+            alert('Google Sign-In library not loaded. Please try again.');
+            return;
+        }
+
+        google.accounts.id.initialize({
+            client_id: '658747910898-eog5fv4j9rh10ej0fbvvf9rg7r62vjqn.apps.googleusercontent.com', // Will be set from environment
+            callback: handleGoogleSignInResponse
+        });
+
+        google.accounts.id.renderButton(
+            document.querySelector('.btn-google'),
+            { theme: 'outline', size: 'large' }
+        );
+
+        google.accounts.id.prompt();
+    } catch (error) {
+        console.error('Google Sign-In error:', error);
+        // Fallback to manual auth flow
+        const response = await fetch('/api/auth/google/signin');
+        const data = await response.json();
+        if (data.success) {
+            window.location.href = data.authUrl;
+        }
+    }
+}
+
+async function handleGoogleSignInResponse(response) {
+    try {
+        // Send token to backend for verification
+        const backendResponse = await fetch('/api/auth/google/callback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                idToken: response.credential
+            })
+        });
+
+        const userData = await backendResponse.json();
+
+        if (userData.success) {
+            // Decode JWT to get user info
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            const userInfo = JSON.parse(jsonPayload);
+
+            // Send full user info to backend
+            const finalResponse = await fetch('/api/auth/google/callback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: response.credential,
+                    userInfo: userInfo
+                })
+            });
+
+            const finalData = await finalResponse.json();
+
+            if (finalData.success) {
+                currentUser = finalData.user;
+                showFeedback('Signed in with Google successfully!', 'perfect');
+                setTimeout(() => {
+                    goToUserDashboard();
+                }, 1000);
+            } else {
+                alert(finalData.error || 'Google sign-in failed');
+            }
+        } else {
+            alert(userData.error || 'Google sign-in failed');
+        }
+    } catch (error) {
+        console.error('Google sign-in callback error:', error);
+        alert('Google sign-in failed. Please try again.');
+    }
+}
+
 // ==================== PARENT AUTHENTICATION ====================
 
 async function handleParentLogin() {

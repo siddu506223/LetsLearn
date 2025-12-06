@@ -207,7 +207,10 @@ class InMemoryDB {
                 emoji: avatarEmojis[Math.floor(Math.random() * avatarEmojis.length)],
                 background: backgroundColors[Math.floor(Math.random() * backgroundColors.length)]
             },
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            signupMethod: userData.signupMethod || 'email',
+            googleId: userData.googleId || null,
+            profilePicture: userData.profilePicture || null
         };
 
         this.tables.users.push(user);

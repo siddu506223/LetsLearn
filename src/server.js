@@ -8,6 +8,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const qGen = new QuestionGenerator(); // Initialize question generator
 
+// Google OAuth Configuration
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || 'YOUR_GOOGLE_CLIENT_SECRET';
+const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3001/api/auth/google/callback';
+
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
@@ -92,6 +97,118 @@ app.post('/api/auth/parent-signup', (req, res) => {
     }
     
     res.status(201).json({ success: true, parent: result.parent });
+});
+
+// GET: Google OAuth Sign-In Redirect
+app.get('/api/auth/google/signin', (req, res) => {
+    const state = Math.random().toString(36).substring(7);
+    const scope = 'profile email';
+    
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${GOOGLE_CLIENT_ID}&` +
+        `redirect_uri=${encodeURIComponent(GOOGLE_CALLBACK_URL)}&` +
+        `response_type=code&` +
+        `scope=${encodeURIComponent(scope)}&` +
+        `state=${state}&` +
+        `access_type=offline`;
+    
+    res.json({ success: true, authUrl: googleAuthUrl });
+});
+
+// POST: Google OAuth Callback Handler
+app.post('/api/auth/google/callback', async (req, res) => {
+    const { code, idToken, userInfo } = req.body;
+    
+    if (!userInfo || !userInfo.email) {
+        return res.status(400).json({ success: false, error: 'Invalid user info' });
+    }
+    
+    try {
+        // Check if user exists
+        let user = db.selectUserByEmail(userInfo.email);
+        
+        if (!user) {
+            // Create new user from Google account
+            const firstName = userInfo.given_name || 'User';
+            const lastName = userInfo.family_name || '';
+            const picture = userInfo.picture || '';
+            
+            const result = db.insertUser({
+                firstName,
+                lastName,
+                email: userInfo.email,
+                password: '', // Google OAuth, no password needed
+                grade: 'not-specified',
+                role: 'student',
+                googleId: userInfo.sub,
+                profilePicture: picture,
+                signupMethod: 'google'
+            });
+            
+            if (!result.success) {
+                return res.status(400).json({ success: false, error: result.error });
+            }
+            user = result.user;
+        } else {
+            // Update existing user with Google info if not already linked
+            if (!user.googleId) {
+                db.updateUser(user.id, {
+                    googleId: userInfo.sub,
+                    profilePicture: userInfo.picture || user.profilePicture,
+                    signupMethod: user.signupMethod || 'email'
+                });
+                user = db.selectUserById(user.id);
+            }
+        }
+        
+        // Update last login
+        db.updateUser(user.id, { lastLogin: new Date().toISOString() });
+        
+        res.json({ 
+            success: true, 
+            user: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                grade: user.grade,
+                avatarStyle: user.avatarStyle,
+                profilePicture: user.profilePicture
+            }
+        });
+    } catch (error) {
+        console.error('Google callback error:', error);
+        res.status(500).json({ success: false, error: 'Authentication failed' });
+    }
+});
+
+// POST: Token verification endpoint
+app.post('/api/auth/verify-google-token', async (req, res) => {
+    const { idToken } = req.body;
+    
+    if (!idToken) {
+        return res.status(400).json({ success: false, error: 'Token required' });
+    }
+    
+    try {
+        // Verify token with Google
+        const response = await fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + idToken);
+        const tokenInfo = await response.json();
+        
+        if (!response.ok || tokenInfo.error) {
+            return res.status(401).json({ success: false, error: 'Invalid token' });
+        }
+        
+        res.json({ success: true, tokenInfo });
+    } catch (error) {
+        console.error('Token verification error:', error);
+        res.status(500).json({ success: false, error: 'Token verification failed' });
+    }
+});
+
+// GET: Logout endpoint
+app.get('/api/auth/logout', (req, res) => {
+    res.json({ success: true, message: 'Logged out successfully' });
 });
 
 // ==================== PROGRESS ROUTES ====================
