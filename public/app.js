@@ -1324,6 +1324,16 @@ function displayQuestion() {
     // Display question
     document.getElementById('questionDisplay').textContent = question.question;
     
+    // Display graphic if available
+    const graphicDisplay = document.getElementById('graphicDisplay');
+    if (question.svgGraphic) {
+        graphicDisplay.innerHTML = question.svgGraphic;
+        graphicDisplay.style.display = 'flex';
+    } else {
+        graphicDisplay.innerHTML = '';
+        graphicDisplay.style.display = 'none';
+    }
+    
     // Display options
     const optionsDisplay = document.getElementById('optionsDisplay');
     optionsDisplay.innerHTML = '';

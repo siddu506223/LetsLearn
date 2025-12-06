@@ -422,6 +422,30 @@ tr:hover {
     box-shadow: 0 3px 10px rgba(102, 126, 234, 0.15);
 }
 
+#graphicDisplay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    min-height: 200px;
+}
+
+#graphicDisplay svg {
+    max-width: 100%;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.graphic-display {
+    animation: fadeIn 0.5s ease-in;
+}
+
 .options-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
