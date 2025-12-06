@@ -235,7 +235,12 @@
 
         <div class="dashboard-grid">
             <h2 style="grid-column: 1/-1; margin-bottom: 20px;">📚 Your Courses by Grade</h2>
+            <div style="grid-column: 1/-1; display: flex; gap: 10px; margin-bottom: 20px;">
+                <button onclick="showGradeCourses()" class="btn-primary" style="padding: 10px 20px; flex: 1;">📚 Grades K-8</button>
+                <button onclick="showHighSchoolCourses()" class="btn-secondary" style="padding: 10px 20px; flex: 1;">🎓 High School</button>
+            </div>
             <div id="gradeCoursesContainer"></div>
+            <div id="highSchoolCoursesContainer" style="display: none; grid-column: 1/-1;"></div>
         </div>
 
         <div class="dashboard-grid" id="subjectsSection" style="display: none; margin-top: 40px;">

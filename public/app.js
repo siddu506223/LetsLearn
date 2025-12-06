@@ -447,6 +447,97 @@ function backToCourses() {
     document.getElementById('subjectsSection').style.display = 'none';
 }
 
+// Show grades K-8 courses
+function showGradeCourses() {
+    document.getElementById('gradeCoursesContainer').style.display = 'grid';
+    document.getElementById('highSchoolCoursesContainer').style.display = 'none';
+    loadGradeCourses();
+}
+
+// Show high school courses
+function showHighSchoolCourses() {
+    document.getElementById('gradeCoursesContainer').style.display = 'none';
+    document.getElementById('highSchoolCoursesContainer').style.display = 'grid';
+    loadHighSchoolCourses();
+}
+
+// Load high school courses
+function loadHighSchoolCourses() {
+    const highSchoolCourses = {
+        'Math': [
+            { id: 'alg1', name: 'Algebra 1', icon: '📐', description: 'Foundation for advanced mathematics' },
+            { id: 'geom', name: 'Geometry', icon: '📏', description: 'Shapes, angles, and proofs' },
+            { id: 'alg2', name: 'Algebra 2', icon: '📊', description: 'Advanced equations and functions' },
+            { id: 'precalc', name: 'Pre-Calculus', icon: '📈', description: 'Trigonometry and analysis' },
+            { id: 'ap_calc', name: 'AP Calculus AB', icon: '🔢', description: 'College-level calculus' },
+            { id: 'ap_calc_bc', name: 'AP Calculus BC', icon: '🔢', description: 'Advanced calculus concepts' }
+        ],
+        'Science': [
+            { id: 'biology', name: 'Biology', icon: '🧬', description: 'Life sciences and organisms' },
+            { id: 'ap_bio', name: 'AP Biology', icon: '🧬', description: 'Advanced biological concepts' },
+            { id: 'chemistry', name: 'Chemistry', icon: '⚗️', description: 'Elements and reactions' },
+            { id: 'ap_chem', name: 'AP Chemistry', icon: '⚗️', description: 'College-level chemistry' },
+            { id: 'physics', name: 'Physics', icon: '⚛️', description: 'Forces, motion, and energy' },
+            { id: 'ap_physics', name: 'AP Physics', icon: '⚛️', description: 'Advanced physics topics' }
+        ],
+        'English': [
+            { id: 'eng9', name: 'English I', icon: '📚', description: 'Literature and composition' },
+            { id: 'eng10', name: 'English II', icon: '📖', description: 'World literature' },
+            { id: 'eng11', name: 'US Literature', icon: '🎭', description: 'American texts and authors' },
+            { id: 'ap_lang', name: 'AP English Lang & Comp', icon: '✍️', description: 'Rhetoric and writing' },
+            { id: 'ap_lit', name: 'AP English Literature', icon: '📚', description: 'Literary analysis' }
+        ],
+        'History': [
+            { id: 'us_hist', name: 'US History', icon: '🇺🇸', description: 'American history and government' },
+            { id: 'world_hist', name: 'World History', icon: '🌍', description: 'Global civilizations' },
+            { id: 'ap_us_hist', name: 'AP US History', icon: '🇺🇸', description: 'College-level US history' },
+            { id: 'ap_world', name: 'AP World History', icon: '🌍', description: 'Advanced global history' }
+        ],
+        'Languages': [
+            { id: 'spanish1', name: 'Spanish I', icon: '🇪🇸', description: 'Basic Spanish language' },
+            { id: 'spanish2', name: 'Spanish II', icon: '🇪🇸', description: 'Intermediate Spanish' },
+            { id: 'ap_spanish', name: 'AP Spanish Language', icon: '🇪🇸', description: 'Advanced Spanish' },
+            { id: 'french1', name: 'French I', icon: '🇫🇷', description: 'Basic French language' },
+            { id: 'chinese1', name: 'Chinese I', icon: '🇨🇳', description: 'Basic Mandarin Chinese' }
+        ]
+    };
+
+    const container = document.getElementById('highSchoolCoursesContainer');
+    let html = '<div style="grid-column: 1/-1;"><button onclick="backToCourses()" class="btn-secondary" style="padding: 10px 20px; margin-bottom: 20px;">← Back to Courses</button></div>';
+    
+    for (const [subject, courses] of Object.entries(highSchoolCourses)) {
+        html += `<div style="grid-column: 1/-1; margin-top: 30px;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">${subject}</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">`;
+        
+        for (const course of courses) {
+            html += `
+                <div class="course-card">
+                    <div class="course-emoji">${course.icon}</div>
+                    <h4 style="margin: 10px 0;">${course.name}</h4>
+                    <p class="course-description" style="font-size: 0.9rem;">${course.description}</p>
+                    <button onclick="selectHighSchoolCourse('${course.id}', '${course.name}')" class="btn-primary btn-course">
+                        📖 Start Course
+                    </button>
+                </div>
+            `;
+        }
+        
+        html += `</div></div>`;
+    }
+    
+    container.innerHTML = html;
+}
+
+// Select a high school course
+function selectHighSchoolCourse(courseId, courseName) {
+    selectedGradeForQuiz = 'hs-' + courseId;
+    document.querySelector('.dashboard-grid:first-of-type').style.display = 'none';
+    document.getElementById('subjectsSection').style.display = 'grid';
+    document.getElementById('subjectsSection').querySelector('h2').textContent = `🎓 ${courseName} - Select a Topic`;
+    document.getElementById('subjectsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
 function logout() {
     currentUser = null;
     selectedGradeForQuiz = null;
