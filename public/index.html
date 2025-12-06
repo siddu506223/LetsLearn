@@ -234,6 +234,16 @@
         </div>
 
         <div class="dashboard-grid">
+            <h2 style="grid-column: 1/-1; margin-bottom: 20px;">📚 Your Courses by Grade</h2>
+            <div id="gradeCoursesContainer"></div>
+        </div>
+
+        <div class="dashboard-grid" id="subjectsSection" style="display: none; margin-top: 40px;">
+            <div style="grid-column: 1/-1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button onclick="backToCourses()" class="btn-secondary" style="padding: 10px 20px;">← Back to Courses</button>
+                <h2 style="margin: 0;">🎓 Select a Subject</h2>
+                <div style="width: 100px;"></div>
+            </div>
             <div class="subject-card reading-card">
                 <div class="card-elephant">🐘</div>
                 <h2>📖 Reading</h2>

@@ -342,6 +342,109 @@ function goToUserDashboard() {
     } else {
         document.getElementById('adminButton').style.display = 'none';
     }
+    
+    // Load grade courses
+    loadGradeCourses();
+}
+
+// Load all grade courses
+function loadGradeCourses() {
+    const gradeNames = {
+        'K': 'Kindergarten',
+        '1': '1st Grade',
+        '2': '2nd Grade',
+        '3': '3rd Grade',
+        '4': '4th Grade',
+        '5': '5th Grade',
+        '6': '6th Grade',
+        '7': '7th Grade',
+        '8': '8th Grade',
+        '9': '9th Grade',
+        '10': '10th Grade',
+        '11': '11th Grade',
+        '12': '12th Grade'
+    };
+    
+    const gradeEmojis = {
+        'K': '🎈',
+        '1': '⭐',
+        '2': '🌟',
+        '3': '💫',
+        '4': '✨',
+        '5': '🌠',
+        '6': '🎯',
+        '7': '🔥',
+        '8': '⚡',
+        '9': '🚀',
+        '10': '🎓',
+        '11': '👑',
+        '12': '🏆'
+    };
+    
+    const container = document.getElementById('gradeCoursesContainer');
+    const userGrade = currentUser.grade;
+    
+    let html = '';
+    for (let g = 'K'; g <= '12'; g = String(parseInt(g === 'K' ? -1 : g) + 1)) {
+        if (g === '0') g = 'K';
+        const gradeName = gradeNames[g];
+        const emoji = gradeEmojis[g];
+        const isCurrentGrade = g === userGrade;
+        const badge = isCurrentGrade ? '<span class="course-badge">Your Grade</span>' : '';
+        
+        html += `
+            <div class="course-card ${isCurrentGrade ? 'current-course' : ''}">
+                <div class="course-emoji">${emoji}</div>
+                <h3>${gradeName}</h3>
+                ${badge}
+                <p class="course-description">Complete all subjects to unlock achievements</p>
+                <button onclick="selectGradeCourse('${g}')" class="btn-primary btn-course">
+                    ${isCurrentGrade ? '🎓 Start Course' : '📖 View Course'}
+                </button>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+}
+
+// Select a grade course and show subjects
+function selectGradeCourse(grade) {
+    selectedGradeForQuiz = grade;
+    
+    // Hide grades, show subjects
+    document.querySelector('.dashboard-grid:first-of-type').style.display = 'none';
+    document.getElementById('subjectsSection').style.display = 'grid';
+    document.getElementById('subjectsSection').querySelector('h2').textContent = `🎓 ${getGradeName(grade)} - Select a Subject`;
+    
+    // Scroll to subjects
+    document.getElementById('subjectsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Get grade name helper
+function getGradeName(grade) {
+    const gradeNames = {
+        'K': 'Kindergarten',
+        '1': '1st Grade',
+        '2': '2nd Grade',
+        '3': '3rd Grade',
+        '4': '4th Grade',
+        '5': '5th Grade',
+        '6': '6th Grade',
+        '7': '7th Grade',
+        '8': '8th Grade',
+        '9': '9th Grade',
+        '10': '10th Grade',
+        '11': '11th Grade',
+        '12': '12th Grade'
+    };
+    return gradeNames[grade] || grade;
+}
+
+// Go back to grades view
+function backToCourses() {
+    document.querySelector('.dashboard-grid:first-of-type').style.display = 'grid';
+    document.getElementById('subjectsSection').style.display = 'none';
 }
 
 function logout() {
