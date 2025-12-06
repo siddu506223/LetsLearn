@@ -335,8 +335,9 @@ function goToUserDashboard() {
     document.getElementById('dashboardView').classList.add('view-active');
     loadUserProgress(currentUser.id);
     
-    // Show admin button only for admin user
-    if (currentUser.email === 'siddu.506223@gmail.com') {
+    // Show admin button only for admin users
+    const adminEmails = ['siddu.506223@gmail.com', 'rishigompa2@gmail.com'];
+    if (adminEmails.includes(currentUser.email)) {
         document.getElementById('adminButton').style.display = 'inline-block';
     } else {
         document.getElementById('adminButton').style.display = 'none';
@@ -381,8 +382,9 @@ function showFeedback(message, type = 'default') {
 // ==================== ADMIN FUNCTIONS ====================
 
 function toggleAdminPanel() {
-    // Security check: Only admin email can access
-    if (currentUser.email !== 'siddu.506223@gmail.com') {
+    // Security check: Only admin emails can access
+    const adminEmails = ['siddu.506223@gmail.com', 'rishigompa2@gmail.com'];
+    if (!adminEmails.includes(currentUser.email)) {
         alert('You do not have permission to access the admin panel');
         return;
     }
