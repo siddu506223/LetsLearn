@@ -343,6 +343,13 @@ function goToUserDashboard() {
         document.getElementById('adminButton').style.display = 'none';
     }
     
+    // Display user avatar
+    if (currentUser.avatarStyle) {
+        const avatar = document.getElementById('userAvatar');
+        avatar.textContent = currentUser.avatarStyle.emoji;
+        avatar.style.background = `linear-gradient(135deg, ${currentUser.avatarStyle.color}80 0%, ${currentUser.avatarStyle.background} 100%)`;
+    }
+    
     // Load grade courses
     loadGradeCourses();
 }
@@ -536,6 +543,76 @@ function selectHighSchoolCourse(courseId, courseName) {
     document.getElementById('subjectsSection').style.display = 'grid';
     document.getElementById('subjectsSection').querySelector('h2').textContent = `🎓 ${courseName} - Select a Topic`;
     document.getElementById('subjectsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Profile and Avatar Functions
+function viewProfile() {
+    document.getElementById('dashboardView').classList.add('view-hidden');
+    document.getElementById('profileView').classList.remove('view-hidden');
+    
+    // Populate profile info
+    document.getElementById('profileName').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+    document.getElementById('profileEmail').textContent = currentUser.email;
+    document.getElementById('profileGrade').textContent = currentUser.grade;
+    document.getElementById('profilePoints').textContent = document.getElementById('pointsCount').textContent.split(' ')[0];
+    
+    const createdDate = new Date(currentUser.createdAt).toLocaleDateString();
+    document.getElementById('profileMemberSince').textContent = createdDate;
+    
+    // Display avatar in profile
+    if (currentUser.avatarStyle) {
+        const profileAvatar = document.getElementById('profileAvatar');
+        profileAvatar.textContent = currentUser.avatarStyle.emoji;
+        profileAvatar.style.background = currentUser.avatarStyle.background;
+    }
+}
+
+function backToDashboard() {
+    document.getElementById('profileView').classList.add('view-hidden');
+    document.getElementById('dashboardView').classList.remove('view-hidden');
+}
+
+function openAvatarEditor() {
+    const avatarColors = ['#FF6B9D', '#00CED1', '#FFD700', '#32CD32', '#FF8C00', '#8A2BE2'];
+    const avatarEmojis = ['🐘', '🦁', '🐰', '🦊', '🐼', '🐸', '🦋', '🐙', '🐯', '🐻', '🦝', '🦊'];
+    const backgroundColors = ['#FFE8F0', '#E0F6FF', '#FFFACD', '#E8F8E8', '#FFE4CC', '#F0E8FF'];
+
+    const container = document.getElementById('avatarOptions');
+    container.innerHTML = '';
+    
+    for (const emoji of avatarEmojis) {
+        for (const color of avatarColors) {
+            const option = document.createElement('div');
+            option.className = 'avatar-option';
+            option.textContent = emoji;
+            option.style.background = color;
+            option.style.borderColor = '#667eea';
+            option.onclick = () => selectAvatar(emoji, color, backgroundColors[Math.floor(Math.random() * backgroundColors.length)]);
+            container.appendChild(option);
+        }
+    }
+    
+    document.getElementById('avatarEditorModal').style.display = 'flex';
+}
+
+function selectAvatar(emoji, color, background) {
+    currentUser.avatarStyle = { emoji, color, background };
+    
+    // Update avatar display
+    const avatar = document.getElementById('profileAvatar');
+    avatar.textContent = emoji;
+    avatar.style.background = background;
+    
+    const headerAvatar = document.getElementById('userAvatar');
+    headerAvatar.textContent = emoji;
+    headerAvatar.style.background = `linear-gradient(135deg, ${color}80 0%, ${background} 100%)`;
+    
+    closeAvatarEditor();
+    showFeedback('Avatar updated successfully!', 'excellent');
+}
+
+function closeAvatarEditor() {
+    document.getElementById('avatarEditorModal').style.display = 'none';
 }
 
 function logout() {

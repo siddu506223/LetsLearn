@@ -215,7 +215,7 @@
     <div id="dashboardView" class="container view-hidden">
         <div class="dashboard-header">
             <div class="header-welcome">
-                <div class="header-elephant">🐘</div>
+                <div id="userAvatar" class="user-avatar">🐘</div>
                 <div>
                     <h1 id="studentName"></h1>
                     <p class="foundation-text">Curious Elephant Academy - RS Foundation</p>
@@ -226,6 +226,7 @@
                 <span id="minigameStatus"></span>
             </div>
             <div class="dashboard-buttons">
+                <button onclick="viewProfile()" class="btn-info">👤 Profile</button>
                 <button onclick="viewLeaderboard()" class="btn-info">🏆 Leaderboard</button>
                 <button onclick="openShop()" class="btn-warning">🛍️ Game Shop</button>
                 <button id="adminButton" onclick="toggleAdminPanel()" class="btn-secondary" style="display: none;">⚙️ Admin</button>
@@ -352,6 +353,57 @@
                 <button onclick="viewGradeContent('10th grade')" class="grade-btn">🔟 10th Grade</button>
                 <button onclick="viewGradeContent('11th grade')" class="grade-btn">1️⃣1️⃣ 11th Grade</button>
                 <button onclick="viewGradeContent('12th grade')" class="grade-btn">1️⃣2️⃣ 12th Grade</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile View -->
+    <div id="profileView" class="container view-hidden">
+        <div class="profile-header">
+            <button onclick="backToDashboard()" class="btn-secondary" style="position: absolute; top: 20px; left: 20px;">← Back</button>
+            <h1 style="text-align: center; margin-top: 20px;">👤 My Profile</h1>
+        </div>
+        
+        <div class="profile-container">
+            <div class="avatar-section">
+                <div id="profileAvatar" class="profile-avatar">🐘</div>
+                <button onclick="openAvatarEditor()" class="btn-primary" style="margin-top: 20px;">✏️ Edit Avatar</button>
+            </div>
+            
+            <div class="profile-info">
+                <div class="info-row">
+                    <label>Name:</label>
+                    <span id="profileName"></span>
+                </div>
+                <div class="info-row">
+                    <label>Email:</label>
+                    <span id="profileEmail"></span>
+                </div>
+                <div class="info-row">
+                    <label>Grade:</label>
+                    <span id="profileGrade"></span>
+                </div>
+                <div class="info-row">
+                    <label>Points:</label>
+                    <span id="profilePoints"></span>
+                </div>
+                <div class="info-row">
+                    <label>Member Since:</label>
+                    <span id="profileMemberSince"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Editor Modal -->
+    <div id="avatarEditorModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2>Choose Your Avatar</h2>
+            <div class="avatar-selector">
+                <div id="avatarOptions" class="avatar-grid"></div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="closeAvatarEditor()" class="btn-secondary">Cancel</button>
             </div>
         </div>
     </div>

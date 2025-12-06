@@ -86,6 +86,11 @@ class InMemoryDB {
                 password: account.password,
                 grade: account.grade,
                 dateOfBirth: account.dateOfBirth,
+                avatarStyle: {
+                    color: ['#FF6B9D', '#00CED1', '#FFD700', '#32CD32', '#FF8C00', '#8A2BE2'][Math.floor(Math.random() * 6)],
+                    emoji: ['🐘', '🦁', '🐰', '🦊', '🐼', '🐸', '🦋', '🐙'][Math.floor(Math.random() * 8)],
+                    background: ['#FFE8F0', '#E0F6FF', '#FFFACD', '#E8F8E8', '#FFE4CC', '#F0E8FF'][Math.floor(Math.random() * 6)]
+                },
                 createdAt: new Date().toISOString()
             };
             this.tables.users.push(user);
@@ -179,6 +184,36 @@ class InMemoryDB {
             return true;
         }
         return false;
+    }
+
+    // INSERT USER: Add a new user with validation
+    insertUser(userData) {
+        // Check if user already exists
+        const existing = this.tables.users.find(u => u.email === userData.email);
+        if (existing) {
+            return { success: false, error: 'Email already registered' };
+        }
+
+        // Generate random avatar
+        const avatarColors = ['#FF6B9D', '#00CED1', '#FFD700', '#32CD32', '#FF8C00', '#8A2BE2'];
+        const avatarEmojis = ['🐘', '🦁', '🐰', '🦊', '🐼', '🐸', '🦋', '🐙'];
+        const backgroundColors = ['#FFE8F0', '#E0F6FF', '#FFFACD', '#E8F8E8', '#FFE4CC', '#F0E8FF'];
+
+        const user = {
+            id: this.nextId++,
+            ...userData,
+            avatarStyle: {
+                color: avatarColors[Math.floor(Math.random() * avatarColors.length)],
+                emoji: avatarEmojis[Math.floor(Math.random() * avatarEmojis.length)],
+                background: backgroundColors[Math.floor(Math.random() * backgroundColors.length)]
+            },
+            createdAt: new Date().toISOString()
+        };
+
+        this.tables.users.push(user);
+        this.initializeUserProgress(user.id);
+        
+        return { success: true, user };
     }
 
     // Initialize user progress for Kindergarten
