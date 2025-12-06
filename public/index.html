@@ -227,6 +227,7 @@
             </div>
             <div class="dashboard-buttons">
                 <button onclick="viewProfile()" class="btn-info">👤 Profile</button>
+                <button onclick="viewCurriculum()" class="btn-info">📖 Curriculum</button>
                 <button onclick="viewLeaderboard()" class="btn-info">🏆 Leaderboard</button>
                 <button onclick="openShop()" class="btn-warning">🛍️ Game Shop</button>
                 <button id="adminButton" onclick="toggleAdminPanel()" class="btn-secondary" style="display: none;">⚙️ Admin</button>
@@ -354,6 +355,19 @@
                 <button onclick="viewGradeContent('11th grade')" class="grade-btn">1️⃣1️⃣ 11th Grade</button>
                 <button onclick="viewGradeContent('12th grade')" class="grade-btn">1️⃣2️⃣ 12th Grade</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Curriculum View -->
+    <div id="curriculumView" class="container view-hidden">
+        <div class="curriculum-header">
+            <button onclick="backToDashboard()" class="btn-secondary" style="position: absolute; top: 20px; left: 20px;">← Back</button>
+            <h1 style="text-align: center; margin-top: 20px;">📖 Curriculum Standards</h1>
+            <input type="text" id="curriculumSearch" placeholder="Search curriculum by grade or subject..." style="width: 100%; padding: 10px; margin-top: 15px; border: 2px solid #667eea; border-radius: 8px; font-size: 1rem;">
+        </div>
+        
+        <div class="curriculum-container">
+            <div id="curriculumContent" style="padding: 20px;"></div>
         </div>
     </div>
 

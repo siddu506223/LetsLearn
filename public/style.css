@@ -2156,5 +2156,99 @@ tr:hover {
     }
 }
 
+/* Curriculum Styles */
+.curriculum-header {
+    position: relative;
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.curriculum-header h1 {
+    margin: 0;
+}
+
+.curriculum-container {
+    background: #f9f9f9;
+    border-radius: 15px;
+    padding: 20px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.curriculum-item {
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border-left: 5px solid #667eea;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.curriculum-grade {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 10px;
+}
+
+.curriculum-subject {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 15px 0 10px 0;
+}
+
+.objectives-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.objectives-list li {
+    padding: 8px 0;
+    padding-left: 20px;
+    position: relative;
+    color: #555;
+    line-height: 1.5;
+}
+
+.objectives-list li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #32CD32;
+    font-weight: bold;
+}
+
+.topics-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.topic-badge {
+    background: linear-gradient(135deg, #FF8C00 0%, #FFD700 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.standards-info {
+    background: #E0F6FF;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    color: #667eea;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
 
 

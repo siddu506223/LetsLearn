@@ -615,6 +615,149 @@ function closeAvatarEditor() {
     document.getElementById('avatarEditorModal').style.display = 'none';
 }
 
+// Curriculum Functions
+function viewCurriculum() {
+    document.getElementById('dashboardView').classList.add('view-hidden');
+    document.getElementById('curriculumView').classList.remove('view-hidden');
+    loadCurriculumData();
+    
+    // Add search functionality
+    document.getElementById('curriculumSearch').oninput = function() {
+        filterCurriculum(this.value);
+    };
+}
+
+function loadCurriculumData() {
+    // Curriculum data structure
+    const curriculumData = {
+        kindergarten: {
+            name: 'Kindergarten',
+            subjects: {
+                reading: {
+                    name: 'Reading & Language Arts',
+                    objectives: ['Recognize letters', 'Learn letter sounds', 'Identify sight words', 'Understand stories', 'Develop listening skills'],
+                    topics: ['Letter Recognition', 'Phonics', 'Sight Words', 'Story Time'],
+                    standards: 'Common Core K.RF, K.L'
+                },
+                math: {
+                    name: 'Mathematics',
+                    objectives: ['Count to 20', 'Recognize numbers 0-10', 'Basic addition/subtraction', 'Identify shapes', 'Measure and compare'],
+                    topics: ['Counting', 'Numbers', 'Shapes', 'Measurement', 'Patterns'],
+                    standards: 'Common Core K.CC, K.OA, K.G'
+                },
+                science: {
+                    name: 'Science',
+                    objectives: ['Observe living things', 'Learn about seasons', 'Understand weather', 'Explore five senses', 'Study water'],
+                    topics: ['Living Things', 'Weather', 'Senses', 'Water', 'Earth'],
+                    standards: 'NGSS K-LS1, K-PS2'
+                }
+            }
+        },
+        grade1: {
+            name: '1st Grade',
+            subjects: {
+                reading: {
+                    name: 'Reading & Language Arts',
+                    objectives: ['Decode words', 'Use context clues', 'Understand story structure', 'Write sentences', 'Use proper punctuation'],
+                    topics: ['Phonics', 'Vocabulary', 'Comprehension', 'Writing'],
+                    standards: 'Common Core 1.RF, 1.RL, 1.W'
+                },
+                math: {
+                    name: 'Mathematics',
+                    objectives: ['Understand place value', 'Add/subtract within 20', 'Solve word problems', 'Tell time', 'Measure length'],
+                    topics: ['Place Value', 'Addition', 'Subtraction', 'Time', 'Measurement'],
+                    standards: 'Common Core 1.NBT, 1.OA'
+                }
+            }
+        },
+        algebra1: {
+            name: 'Algebra 1',
+            subjects: {
+                core: {
+                    name: 'Algebra 1 Core',
+                    objectives: ['Solve linear equations', 'Graph functions', 'Understand slope', 'Solve systems', 'Factor polynomials', 'Solve quadratics'],
+                    topics: ['Linear Equations', 'Graphing', 'Functions', 'Systems', 'Polynomials', 'Quadratics'],
+                    standards: 'Common Core HSA.CED, HSA.REI'
+                }
+            }
+        },
+        geometry: {
+            name: 'Geometry',
+            subjects: {
+                core: {
+                    name: 'Geometry Core',
+                    objectives: ['Understand congruence', 'Learn similarity', 'Calculate area/volume', 'Trigonometry', 'Coordinate geometry'],
+                    topics: ['Congruence', 'Similarity', 'Area & Volume', 'Trigonometry', 'Coordinates'],
+                    standards: 'Common Core HSG.CO, HSG.SRT'
+                }
+            }
+        },
+        apBiology: {
+            name: 'AP Biology',
+            subjects: {
+                core: {
+                    name: 'AP Biology',
+                    objectives: ['Evolution & natural selection', 'Cell structure & function', 'DNA & proteins', 'Genetics', 'Ecology', 'Homeostasis'],
+                    topics: ['Evolution', 'Cell Biology', 'Genetics', 'Ecology', 'Physiology'],
+                    standards: 'AP College Board Framework'
+                }
+            }
+        },
+        usHistory: {
+            name: 'US History',
+            subjects: {
+                core: {
+                    name: 'US History',
+                    objectives: ['Native Americans', 'Colonial period', 'American Revolution', 'Civil War', 'Westward expansion', 'Industrial era', 'Modern America'],
+                    topics: ['Colonial', 'Revolution', 'Civil War', 'Expansion', 'Industrial', 'Modern'],
+                    standards: 'C3 Framework'
+                }
+            }
+        }
+    };
+
+    const container = document.getElementById('curriculumContent');
+    let html = '';
+
+    for (const [gradeKey, gradeData] of Object.entries(curriculumData)) {
+        html += `<div class="curriculum-item">
+            <div class="curriculum-grade">${gradeData.name}</div>`;
+
+        for (const [subjectKey, subjectData] of Object.entries(gradeData.subjects)) {
+            html += `
+                <div class="curriculum-subject">${subjectData.name}</div>
+                <div>
+                    <strong style="color: #667eea;">Learning Objectives:</strong>
+                    <ul class="objectives-list">
+                        ${subjectData.objectives.map(obj => `<li>${obj}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #667eea;">Topics Covered:</strong>
+                    <div class="topics-list">
+                        ${subjectData.topics.map(topic => `<span class="topic-badge">${topic}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="standards-info">📋 ${subjectData.standards}</div>
+            `;
+        }
+
+        html += `</div>`;
+    }
+
+    container.innerHTML = html;
+}
+
+function filterCurriculum(searchTerm) {
+    const items = document.querySelectorAll('.curriculum-item');
+    const term = searchTerm.toLowerCase();
+
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(term) ? 'block' : 'none';
+    });
+}
+
 function logout() {
     currentUser = null;
     selectedGradeForQuiz = null;
