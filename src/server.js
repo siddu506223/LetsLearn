@@ -2,9 +2,11 @@ const express = require('express');
 const path = require('path');
 const db = require('./database-persistent'); // Using persistent file-based database
 const quizzes = require('./quizzes');
+const QuestionGenerator = require('./questionGenerator');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const qGen = new QuestionGenerator(); // Initialize question generator
 
 // Middleware
 app.use(express.json());
@@ -641,6 +643,49 @@ app.post('/api/admin/edit-parent-grade', (req, res) => {
 app.get('/api/leaderboard', (req, res) => {
     const leaderboard = db.getLeaderboard(50);
     res.json(leaderboard);
+});
+
+// ==================== AI QUESTION GENERATION ROUTES ====================
+
+// GET available topics for question generation
+app.get('/api/ai/topics', (req, res) => {
+    const topics = qGen.getAvailableTopics();
+    res.json({ success: true, topics });
+});
+
+// GET a generated question for a specific topic
+app.get('/api/ai/question/:topic/:difficulty', (req, res) => {
+    const { topic, difficulty } = req.params;
+    const validDifficulties = ['easy', 'medium', 'hard'];
+    
+    if (!validDifficulties.includes(difficulty)) {
+        return res.status(400).json({ success: false, error: 'Invalid difficulty level' });
+    }
+    
+    const question = qGen.generateQuestion(topic, difficulty);
+    
+    if (!question) {
+        return res.status(404).json({ success: false, error: 'Topic not found' });
+    }
+    
+    res.json({ success: true, question });
+});
+
+// POST generate a quiz of multiple questions
+app.post('/api/ai/quiz', (req, res) => {
+    const { topic, difficulty, count = 10 } = req.body;
+    
+    if (!topic || !difficulty) {
+        return res.status(400).json({ success: false, error: 'Topic and difficulty required' });
+    }
+    
+    const quiz = qGen.generateQuiz(topic, difficulty, Math.min(count, 50));
+    
+    if (quiz.length === 0) {
+        return res.status(400).json({ success: false, error: 'Could not generate quiz' });
+    }
+    
+    res.json({ success: true, quiz, count: quiz.length });
 });
 
 // Serve index.html for root path
