@@ -29,6 +29,87 @@ function initializeApp() {
 
 // ==================== AUTH ROUTES ====================
 
+// GET: Google OAuth Configuration
+app.get('/api/auth/google/config', (req, res) => {
+    const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID';
+    
+    res.json({
+        success: true,
+        clientId: GOOGLE_CLIENT_ID,
+        redirectUri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/api/auth/google/callback',
+        configured: GOOGLE_CLIENT_ID !== 'REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID'
+    });
+});
+
+// POST: Handle Google Sign-In Token
+app.post('/api/auth/google/signin', (req, res) => {
+    const { credential, decodedToken } = req.body;
+    
+    if (!credential && !decodedToken) {
+        return res.status(400).json({
+            success: false,
+            error: 'Google credential or token required'
+        });
+    }
+
+    // Extract user info from Google token
+    const userInfo = decodedToken || {
+        email: 'user@gmail.com',
+        name: 'Google User',
+        picture: ''
+    };
+
+    // Check if user exists
+    let user = db.selectUserByEmail(userInfo.email);
+
+    if (!user) {
+        // Create new user from Google account
+        const nameParts = (userInfo.name || 'User').split(' ');
+        const result = db.insertUser({
+            firstName: nameParts[0],
+            lastName: nameParts[1] || '',
+            email: userInfo.email,
+            password: 'GOOGLE_OAUTH_USER', // Placeholder
+            grade: 'not-specified',
+            role: 'student',
+            avatar: 'elephant-default',
+            googleId: userInfo.sub || userInfo.id,
+            profilePicture: userInfo.picture || '',
+            signupMethod: 'google',
+            verified: true
+        });
+
+        if (!result.success) {
+            return res.status(400).json({ 
+                success: false, 
+                error: result.error 
+            });
+        }
+        
+        user = result.user;
+    } else {
+        // Update existing user
+        db.updateUser(user.id, {
+            lastLogin: new Date().toISOString(),
+            googleId: userInfo.sub || userInfo.id
+        });
+        user = db.selectUserById(user.id);
+    }
+
+    res.json({
+        success: true,
+        user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            grade: user.grade,
+            avatar: user.avatar || 'elephant-default',
+            points: user.points || 0
+        }
+    });
+});
+
 // POST: Student Sign Up
 app.post('/api/auth/signup', (req, res) => {
     const { firstName, lastName, email, password, grade } = req.body;

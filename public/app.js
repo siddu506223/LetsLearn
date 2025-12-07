@@ -129,13 +129,84 @@ async function handleParentLogin(event) {
 }
 
 function handleGoogleSignup() {
-    alert('Google Sign-up integration ready. Implement with Google API credentials.');
-    // TODO: Implement Google OAuth signup
+    // Initialize Google Sign-In if not already done
+    if (!window.google) {
+        alert('Google Sign-In not configured. Please set GOOGLE_CLIENT_ID environment variable.');
+        return;
+    }
+
+    // Trigger Google Sign-In
+    google.accounts.id.initialize({
+        client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with actual client ID
+        callback: handleGoogleCallback
+    });
+    
+    google.accounts.id.renderButton(
+        document.querySelector('.google-button'),
+        { theme: 'outline', size: 'large' }
+    );
 }
 
 function handleGoogleLogin() {
-    alert('Google Login integration ready. Implement with Google API credentials.');
-    // TODO: Implement Google OAuth login
+    // Initialize Google Sign-In if not already done
+    if (!window.google) {
+        alert('Google Sign-In not configured. Please set GOOGLE_CLIENT_ID environment variable.');
+        return;
+    }
+
+    // Trigger Google Sign-In
+    google.accounts.id.initialize({
+        client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with actual client ID
+        callback: handleGoogleCallback
+    });
+    
+    google.accounts.id.renderButton(
+        document.querySelector('.google-button'),
+        { theme: 'outline', size: 'large' }
+    );
+}
+
+// Handle Google Sign-In response
+async function handleGoogleCallback(response) {
+    if (!response.credential) {
+        console.error('No credential received from Google');
+        return;
+    }
+
+    try {
+        // Decode the JWT (you would normally do this server-side)
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+        
+        const decodedToken = JSON.parse(jsonPayload);
+
+        // Send to server for verification and user creation
+        const serverResponse = await fetch('/api/auth/google/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ credential: response.credential, decodedToken })
+        });
+
+        const data = await serverResponse.json();
+
+        if (data.success) {
+            currentUser = data.user;
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            alert(`Welcome ${data.user.firstName}!`);
+            showDashboard();
+        } else {
+            alert('Google sign-in failed: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Google sign-in error:', error);
+        alert('Error during Google sign-in');
+    }
 }
 
 function handleLogout() {
