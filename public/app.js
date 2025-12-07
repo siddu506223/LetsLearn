@@ -537,6 +537,96 @@ function startAssignment(assignmentId) {
     // TODO: Implement assignment submission interface
 }
 
+// ==================== ELLO AI FEEDBACK ====================
+
+async function getElloFeedback(isCorrect, subject, errorType) {
+    try {
+        const response = await fetch('/api/ello/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isCorrect, subject, errorType })
+        });
+
+        const feedback = await response.json();
+        return feedback;
+    } catch (error) {
+        console.error('Error getting Ello feedback:', error);
+        return { message: 'Keep learning!' };
+    }
+}
+
+async function submitEssay(content, topic) {
+    if (!content || content.trim().length === 0) {
+        alert('Please write something first!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/ello/grade-essay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, topic })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            displayEssayGrading(data.grading);
+        }
+    } catch (error) {
+        console.error('Error grading essay:', error);
+    }
+}
+
+function displayEssayGrading(grading) {
+    let feedbackHtml = `
+        <div class="essay-feedback">
+            <h3>🤖 Ello's Feedback</h3>
+            <div class="feedback-score">Score: ${grading.score}/100</div>
+            
+            <h4>Feedback:</h4>
+            <ul>
+                ${grading.feedback.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+            
+            <h4>Strengths:</h4>
+            <ul>
+                ${grading.strengths.map(s => `<li>✅ ${s}</li>`).join('')}
+            </ul>
+            
+            <h4>Areas to Improve:</h4>
+            <ul>
+                ${grading.improvements.map(i => `<li>💡 ${i}</li>`).join('')}
+            </ul>
+            
+            <p class="next-steps">${grading.nextSteps}</p>
+        </div>
+    `;
+    
+    // Display in a modal or container
+    alert('Essay has been graded! Check your feedback.');
+}
+
+async function getElloRecommendations(userId) {
+    try {
+        const response = await fetch('/api/ello/recommendations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId,
+                topicsMastered: [],
+                recentAccuracy: currentUser.points ? (currentUser.points / 500 * 100) : 0
+            })
+        });
+
+        const data = await response.json();
+        return data.recommendations || [];
+    } catch (error) {
+        console.error('Error getting recommendations:', error);
+        return [];
+    }
+}
+
 // ==================== INITIALIZATION ====================
 
 document.addEventListener('DOMContentLoaded', function() {

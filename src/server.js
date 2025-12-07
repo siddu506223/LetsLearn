@@ -2,12 +2,14 @@ const express = require('express');
 const path = require('path');
 const db = require('./database-v2');
 const CurriculumInitializer = require('./curriculum-initializer');
+const ElloAIGrader = require('./ello-ai-grader');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Initialize question generator
+// Initialize question generator and AI grader
 const questionGenerator = new CurriculumInitializer();
+const elloAI = new ElloAIGrader();
 
 // Middleware
 app.use(express.json());
@@ -440,6 +442,187 @@ app.post('/api/assignments', (req, res) => {
     } else {
         res.status(500).json({ success: false, error: result.error });
     }
+});
+
+// POST: Submit essay/written assignment (with Ello AI grading)
+app.post('/api/assignments/:assignmentId/submit-essay', (req, res) => {
+    const { userId, content } = req.body;
+    const { assignmentId } = req.params;
+    
+    if (!userId || !content) {
+        return res.status(400).json({
+            success: false,
+            error: 'User ID and content required'
+        });
+    }
+
+    // Grade the essay using Ello AI
+    const essayGrading = elloAI.gradeEssay(content, {});
+    
+    res.json({
+        success: true,
+        submission: {
+            assignmentId,
+            userId,
+            submittedAt: new Date().toISOString(),
+            grading: essayGrading,
+            elloFeedback: `Your essay on this topic shows ${essayGrading.score > 80 ? 'excellent' : essayGrading.score > 70 ? 'good' : 'developing'} understanding.`
+        }
+    });
+});
+
+// POST: Submit file (presentation, document, etc.)
+app.post('/api/assignments/:assignmentId/submit-file', (req, res) => {
+    const { userId, fileName, fileType } = req.body;
+    const { assignmentId } = req.params;
+    
+    if (!userId || !fileName) {
+        return res.status(400).json({
+            success: false,
+            error: 'User ID and file name required'
+        });
+    }
+
+    // Simulate file reception
+    const fileData = {
+        assignmentId,
+        userId,
+        fileName,
+        fileType,
+        submittedAt: new Date().toISOString(),
+        status: 'submitted',
+        feedback: `Your ${fileType} file has been received. Your teacher will review it within 24 hours.`
+    };
+
+    res.json({
+        success: true,
+        submission: fileData
+    });
+});
+
+// POST: Submit interactive simulation response
+app.post('/api/assignments/:assignmentId/submit-simulation', (req, res) => {
+    const { userId, correctSteps, totalSteps, timeSpent, attempts } = req.body;
+    const { assignmentId } = req.params;
+    
+    if (!userId || !correctSteps || !totalSteps) {
+        return res.status(400).json({
+            success: false,
+            error: 'Required simulation data missing'
+        });
+    }
+
+    // Grade using Ello AI
+    const simulationGrading = elloAI.gradeSimulation({
+        correctSteps,
+        totalSteps,
+        timeSpent: timeSpent || 0,
+        attempts: attempts || 1
+    });
+    
+    res.json({
+        success: true,
+        submission: {
+            assignmentId,
+            userId,
+            submittedAt: new Date().toISOString(),
+            grading: simulationGrading,
+            elloFeedback: `Great work on this interactive simulation! You completed ${Math.round((correctSteps/totalSteps)*100)}% of the steps correctly.`
+        }
+    });
+});
+
+// ==================== ELLO AI GRADING ====================
+
+// POST: Get feedback for an answer
+app.post('/api/ello/feedback', (req, res) => {
+    const { isCorrect, subject, errorType, answer } = req.body;
+    
+    let feedback;
+    if (isCorrect) {
+        feedback = {
+            success: true,
+            message: elloAI.getCorrectFeedback(),
+            isCorrect: true
+        };
+    } else {
+        feedback = {
+            success: true,
+            isCorrect: false,
+            ...elloAI.getIncorrectFeedback(subject, errorType)
+        };
+    }
+    
+    res.json(feedback);
+});
+
+// POST: Grade essay/creative submission
+app.post('/api/ello/grade-essay', (req, res) => {
+    const { content, rubric, topic } = req.body;
+    
+    if (!content) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'Essay content required' 
+        });
+    }
+
+    const grading = elloAI.gradeEssay(content, rubric);
+    
+    res.json({
+        success: true,
+        grading: {
+            ...grading,
+            feedback: grading.feedback,
+            topicFeedback: `Great job exploring ${topic}!`
+        }
+    });
+});
+
+// POST: Grade interactive simulation
+app.post('/api/ello/grade-simulation', (req, res) => {
+    const { correctSteps, totalSteps, timeSpent, attempts } = req.body;
+    
+    if (!correctSteps || !totalSteps) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'Simulation data required' 
+        });
+    }
+
+    const grading = elloAI.gradeSimulation({
+        correctSteps,
+        totalSteps,
+        timeSpent: timeSpent || 0,
+        attempts: attempts || 1
+    });
+    
+    res.json({
+        success: true,
+        grading
+    });
+});
+
+// POST: Get learning recommendations
+app.post('/api/ello/recommendations', (req, res) => {
+    const { userId, topicsMastered, recentAccuracy } = req.body;
+    
+    if (!userId) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'User ID required' 
+        });
+    }
+
+    const recommendations = elloAI.generateRecommendations({
+        topicsMastered: topicsMastered || [],
+        recentAccuracy: recentAccuracy || 0
+    }, 'current-topic');
+    
+    res.json({
+        success: true,
+        recommendations
+    });
 });
 
 // ==================== ERROR HANDLING ====================
