@@ -1,0 +1,519 @@
+<!-- Ello AI Grading Component -->
+<!-- Add this to index.html or create a separate page for grading -->
+
+<div id="ello-grading-container" class="grading-container">
+    <div class="ello-header">
+        <h2>✨ Meet Ello - Your AI Learning Buddy! ✨</h2>
+        <p>Submit your work and get fun, encouraging feedback!</p>
+    </div>
+
+    <div class="grading-form">
+        <!-- Assignment Type Selection -->
+        <div class="form-group">
+            <label for="assignment-type">What are you submitting?</label>
+            <select id="assignment-type" class="form-control">
+                <option value="">Select assignment type...</option>
+                <option value="writing">📝 Writing (Essay, Story, Poem)</option>
+                <option value="presentation">🎤 Presentation</option>
+                <option value="picture">🎨 Picture/Image</option>
+            </select>
+        </div>
+
+        <!-- Grade Level Selection -->
+        <div class="form-group">
+            <label for="grade-level">Your grade level:</label>
+            <select id="grade-level" class="form-control">
+                <option value="">Select grade level...</option>
+                <option value="K">Kindergarten</option>
+                <option value="1-2">1st-2nd Grade</option>
+                <option value="3-5">3rd-5th Grade</option>
+                <option value="6-8">6th-8th Grade</option>
+                <option value="9-12">9th-12th Grade</option>
+            </select>
+        </div>
+
+        <!-- Writing Submission -->
+        <div id="writing-section" class="submission-section" style="display:none;">
+            <div class="form-group">
+                <label for="writing-content">Paste your writing here:</label>
+                <textarea 
+                    id="writing-content" 
+                    class="form-control" 
+                    placeholder="Write your story, essay, or poem here..."
+                    rows="10"
+                ></textarea>
+                <small class="form-text">Min 20 words | Max 50,000 characters</small>
+            </div>
+        </div>
+
+        <!-- Presentation Submission -->
+        <div id="presentation-section" class="submission-section" style="display:none;">
+            <div class="form-group">
+                <label for="presentation-description">Describe your presentation:</label>
+                <textarea 
+                    id="presentation-description" 
+                    class="form-control" 
+                    placeholder="What was your presentation about? What did you cover?"
+                    rows="8"
+                ></textarea>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="presentation-visuals">
+                    I included visual aids (slides, poster, etc.)
+                </label>
+            </div>
+        </div>
+
+        <!-- Picture Submission -->
+        <div id="picture-section" class="submission-section" style="display:none;">
+            <div class="form-group">
+                <label for="picture-file">Upload your image:</label>
+                <input type="file" id="picture-file" class="form-control" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="picture-description">Describe your artwork:</label>
+                <textarea 
+                    id="picture-description" 
+                    class="form-control" 
+                    placeholder="What is your picture about? What did you create?"
+                    rows="6"
+                ></textarea>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button id="submit-grading" class="btn btn-primary btn-lg">
+            Submit to Ello for Grading! 🚀
+        </button>
+    </div>
+
+    <!-- Grading Results -->
+    <div id="grading-results" class="grading-results" style="display:none;">
+        <div class="ello-feedback">
+            <div class="ello-message-box">
+                <div class="ello-emoji">🤖</div>
+                <div id="ello-message" class="ello-message"></div>
+            </div>
+
+            <div class="grade-display">
+                <div class="grade-circle">
+                    <span id="grade-score" class="grade-number"></span>
+                    <span id="grade-letter" class="grade-letter"></span>
+                </div>
+                <div class="grade-info">
+                    <p id="grade-feedback" class="feedback-text"></p>
+                    <div id="celebration" class="celebration"></div>
+                </div>
+            </div>
+
+            <div class="suggestions-box">
+                <h4>💡 Tips for next time:</h4>
+                <ul id="suggestions-list"></ul>
+            </div>
+
+            <button id="submit-another" class="btn btn-secondary">Submit Another Assignment</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.grading-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.ello-header {
+    text-align: center;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.ello-header h2 {
+    margin: 0;
+    font-size: 2em;
+}
+
+.ello-header p {
+    margin: 10px 0 0 0;
+    font-size: 1.1em;
+}
+
+.grading-form {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.submission-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-lg {
+    font-size: 1.2em;
+    padding: 15px 40px;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    margin-top: 20px;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.grading-results {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.ello-feedback {
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ello-message-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.ello-emoji {
+    font-size: 3em;
+    flex-shrink: 0;
+}
+
+.ello-message {
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+.grade-display {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.grade-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.grade-number {
+    font-size: 3em;
+    font-weight: bold;
+}
+
+.grade-letter {
+    font-size: 1.5em;
+    margin-top: 5px;
+}
+
+.grade-info {
+    flex: 1;
+}
+
+.feedback-text {
+    font-size: 1.1em;
+    color: #333;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.celebration {
+    font-size: 2em;
+    margin-top: 10px;
+}
+
+.suggestions-box {
+    background: #e7f3ff;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    margin-bottom: 20px;
+}
+
+.suggestions-box h4 {
+    margin-top: 0;
+    color: #667eea;
+}
+
+.suggestions-box ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.suggestions-box li {
+    margin: 8px 0;
+    color: #555;
+}
+
+.form-text {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .grading-container {
+        padding: 10px;
+    }
+
+    .grade-display {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .grade-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    .grade-number {
+        font-size: 2.5em;
+    }
+}
+</style>
+
+<script>
+// Ello Grading Frontend Script
+document.addEventListener('DOMContentLoaded', function() {
+    const assignmentTypeSelect = document.getElementById('assignment-type');
+    const gradeLevelSelect = document.getElementById('grade-level');
+    const writingSection = document.getElementById('writing-section');
+    const presentationSection = document.getElementById('presentation-section');
+    const pictureSection = document.getElementById('picture-section');
+    const submitButton = document.getElementById('submit-grading');
+    const gradingResults = document.getElementById('grading-results');
+    const gradingForm = document.querySelector('.grading-form');
+    const submitAnotherButton = document.getElementById('submit-another');
+
+    // Show/hide submission sections based on assignment type
+    assignmentTypeSelect.addEventListener('change', function() {
+        writingSection.style.display = 'none';
+        presentationSection.style.display = 'none';
+        pictureSection.style.display = 'none';
+
+        if (this.value === 'writing') {
+            writingSection.style.display = 'block';
+        } else if (this.value === 'presentation') {
+            presentationSection.style.display = 'block';
+        } else if (this.value === 'picture') {
+            pictureSection.style.display = 'block';
+        }
+    });
+
+    // Handle grading submission
+    submitButton.addEventListener('click', async function() {
+        const assignmentType = assignmentTypeSelect.value;
+        const gradeLevel = gradeLevelSelect.value;
+
+        if (!assignmentType || !gradeLevel) {
+            alert('Please select an assignment type and grade level!');
+            return;
+        }
+
+        let payload = { gradeLevel };
+
+        if (assignmentType === 'writing') {
+            const content = document.getElementById('writing-content').value.trim();
+            if (!content) {
+                alert('Please write something for Ello to grade!');
+                return;
+            }
+            payload.content = content;
+        } else if (assignmentType === 'presentation') {
+            const description = document.getElementById('presentation-description').value.trim();
+            if (!description) {
+                alert('Please describe your presentation!');
+                return;
+            }
+            payload.description = description;
+            payload.hasVisuals = document.getElementById('presentation-visuals').checked;
+        } else if (assignmentType === 'picture') {
+            const fileInput = document.getElementById('picture-file');
+            const description = document.getElementById('picture-description').value.trim();
+            
+            if (!fileInput.files.length) {
+                alert('Please upload an image!');
+                return;
+            }
+            if (!description) {
+                alert('Please describe your artwork!');
+                return;
+            }
+            
+            // In a real app, upload the file and get URL
+            payload.fileUrl = 'uploaded-image-url';
+            payload.description = description;
+        }
+
+        try {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Ello is grading your work... ⏳';
+
+            const endpoint = `/api/ello/grade/${assignmentType}`;
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                displayGradingResults(result.grade);
+                gradingForm.style.display = 'none';
+                gradingResults.style.display = 'block';
+            } else {
+                alert('Error: ' + (result.error || 'Failed to grade submission'));
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit to Ello for Grading! 🚀';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error submitting to Ello: ' + error.message);
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit to Ello for Grading! 🚀';
+        }
+    });
+
+    // Handle submit another
+    submitAnotherButton.addEventListener('click', function() {
+        // Reset form
+        assignmentTypeSelect.value = '';
+        gradeLevelSelect.value = '';
+        document.getElementById('writing-content').value = '';
+        document.getElementById('presentation-description').value = '';
+        document.getElementById('presentation-visuals').checked = false;
+        document.getElementById('picture-file').value = '';
+        document.getElementById('picture-description').value = '';
+
+        writingSection.style.display = 'none';
+        presentationSection.style.display = 'none';
+        pictureSection.style.display = 'none';
+
+        // Show form
+        gradingForm.style.display = 'block';
+        gradingResults.style.display = 'none';
+
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit to Ello for Grading! 🚀';
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    function displayGradingResults(grade) {
+        document.getElementById('ello-message').textContent = grade.elloMessage;
+        document.getElementById('grade-score').textContent = grade.score;
+        document.getElementById('grade-letter').textContent = grade.letterGrade;
+        document.getElementById('grade-feedback').textContent = grade.feedback;
+        document.getElementById('celebration').textContent = grade.celebration;
+
+        const suggestionsList = document.getElementById('suggestions-list');
+        suggestionsList.innerHTML = '';
+        grade.suggestions.forEach(suggestion => {
+            const li = document.createElement('li');
+            li.textContent = suggestion;
+            suggestionsList.appendChild(li);
+        });
+    }
+});
+</script>
